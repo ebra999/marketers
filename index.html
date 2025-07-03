@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة المسوقين والعملاء</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .loading {
+            display: none;
+        }
+        .loading.active {
+            display: inline-block;
+        }
+        .message {
+            display: none;
+        }
+        .message.active {
+            display: block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                <i class="fas fa-chart-line text-blue-600 ml-2"></i>
+                نظام إدارة المسوقين والعملاء
+            </h1>
+            <p class="text-gray-600">إدارة بيانات المسوقين وتتبع الأداء والأرباح</p>
+        </header>
+
+        <!-- Loading Spinner -->
+        <div id="globalLoading" class="loading text-center py-8">
+            <i class="fas fa-spinner spinner text-4xl text-blue-600"></i>
+            <p class="mt-2 text-gray-600">جاري التحميل...</p>
+        </div>
+
+        <!-- Messages -->
+        <div id="setupMessage" class="message active bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+            <i class="fas fa-cog ml-2"></i>
+            <span id="setupText">
+                يرجى إعداد معرف Google Sheets أولاً من زر "إعدادات الجدول" أعلاه. تأكد من مشاركة الجدول مع: 
+                <code class="bg-yellow-200 px-1 rounded">id-597@studenttracker-461318.iam.gserviceaccount.com</code>
+            </span>
+        </div>
+
+        <div id="errorMessage" class="message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <i class="fas fa-exclamation-triangle ml-2"></i>
+            <span id="errorText"></span>
+        </div>
+
+        <div id="successMessage" class="message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            <i class="fas fa-check-circle ml-2"></i>
+            <span id="successText"></span>
+        </div>
+
+        <!-- Public Marketers View -->
+        <div id="publicView" class="page-section active">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">
+                        <i class="fas fa-users text-blue-600 ml-2"></i>
+                        جميع المسوقين
+                    </h2>
+                    <div class="flex gap-2">
+                        <button id="showConfigBtn" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700">
+                            <i class="fas fa-cog ml-2"></i>
+                            إعدادات الجدول
+                        </button>
+                        <button id="showLoginBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                            <i class="fas fa-sign-in-alt ml-2"></i>
+                            تسجيل الدخول
+                        </button>
+                        <button id="showRegisterBtn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                            <i class="fas fa-user-plus ml-2"></i>
+                            تسجيل مسوق جديد
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border border-gray-300 px-4 py-2 text-right">الكود</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">الاسم</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">عدد العملاء</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">إجمالي الأرباح</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">تاريخ التسجيل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="publicMarketersTable">
+                            <tr>
+                                <td colspan="5" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                                    <i class="fas fa-spinner spinner text-4xl mb-2 block"></i>
+                                    جاري تحميل البيانات...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Page -->
+        <div id="configPage" class="page-section">
+            <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+                <h2 class="text-2xl font-bold text-center mb-6">
+                    <i class="fas fa-cog text-purple-600 ml-2"></i>
+                    إعدادات Google Sheets
+                </h2>
+                <form id="configForm">
+                    <div class="mb-4">
+                        <label for="spreadsheetId" class="block text-sm font-medium text-gray-700 mb-2">
+                            معرف الجدول (Spreadsheet ID)
+                        </label>
+                        <input 
+                            type="text" 
+                            id="spreadsheetId" 
+                            name="spreadsheetId" 
+                            required
+                            placeholder="أدخل معرف جدول Google Sheets"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-right"
+                        >
+                        <p class="text-sm text-gray-600 mt-1">يمكنك العثور على المعرف في رابط الجدول بين /d/ و /edit</p>
+                        <div class="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
+                            <p class="text-sm text-blue-800 font-semibold mb-2">خطوات الإعداد:</p>
+                            <ol class="text-sm text-blue-700 space-y-1">
+                                <li>1. قم بإنشاء جدول Google Sheets جديد</li>
+                                <li>2. أنشئ 3 أوراق بالأسماء: المسوقين، sheet2، الدفع</li>
+                                <li>3. شارك الجدول مع: <code class="bg-blue-100 px-1 rounded text-xs">id-597@studenttracker-461318.iam.gserviceaccount.com</code></li>
+                                <li>4. انسخ معرف الجدول من الرابط والصقه هنا</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition duration-200"
+                    >
+                        <i class="fas fa-spinner spinner loading ml-2"></i>
+                        حفظ الإعدادات
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <button 
+                        id="backToPublicFromConfigBtn" 
+                        class="text-blue-600 hover:text-blue-800 text-sm"
+                    >
+                        العودة للصفحة الرئيسية
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div id="loginPage" class="page-section">
+            <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+                <h2 class="text-2xl font-bold text-center mb-6">
+                    <i class="fas fa-sign-in-alt text-blue-600 ml-2"></i>
+                    تسجيل الدخول
+                </h2>
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-2">
+                            رقم الجوال
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="phoneNumber" 
+                            name="phoneNumber" 
+                            required
+                            placeholder="أدخل رقم الجوال"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
+                        >
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
+                    >
+                        <i class="fas fa-spinner spinner loading ml-2"></i>
+                        دخول
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <button 
+                        id="adminLoginBtn" 
+                        class="text-red-600 hover:text-red-800 text-sm"
+                    >
+                        دخول الإدارة
+                    </button>
+                </div>
+                <div class="mt-2 text-center">
+                    <button 
+                        id="backToPublicBtn" 
+                        class="text-blue-600 hover:text-blue-800 text-sm"
+                    >
+                        العودة للصفحة الرئيسية
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Page -->
+        <div id="registerPage" class="page-section">
+            <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+                <h2 class="text-2xl font-bold text-center mb-6">
+                    <i class="fas fa-user-plus text-green-600 ml-2"></i>
+                    تسجيل مسوق جديد
+                </h2>
+                <form id="registerForm">
+                    <div class="mb-4">
+                        <label for="marketerName" class="block text-sm font-medium text-gray-700 mb-2">
+                            الاسم الكامل
+                        </label>
+                        <input 
+                            type="text" 
+                            id="marketerName" 
+                            name="marketerName" 
+                            required
+                            placeholder="أدخل الاسم الكامل"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-right"
+                        >
+                    </div>
+                    <div class="mb-4">
+                        <label for="marketerPhone" class="block text-sm font-medium text-gray-700 mb-2">
+                            رقم الجوال
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="marketerPhone" 
+                            name="marketerPhone" 
+                            required
+                            placeholder="أدخل رقم الجوال"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-right"
+                        >
+                    </div>
+                    <div class="mb-4">
+                        <label for="generatedCode" class="block text-sm font-medium text-gray-700 mb-2">
+                            كود المسوق (تلقائي)
+                        </label>
+                        <input 
+                            type="text" 
+                            id="generatedCode" 
+                            name="generatedCode" 
+                            readonly
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
+                        >
+                    </div>
+                    <div class="mb-6">
+                        <label for="registrationDate" class="block text-sm font-medium text-gray-700 mb-2">
+                            تاريخ التسجيل
+                        </label>
+                        <input 
+                            type="date" 
+                            id="registrationDate" 
+                            name="registrationDate" 
+                            readonly
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
+                        >
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200"
+                    >
+                        <i class="fas fa-spinner spinner loading ml-2"></i>
+                        تسجيل
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <button 
+                        id="backToPublicFromRegisterBtn" 
+                        class="text-blue-600 hover:text-blue-800 text-sm"
+                    >
+                        العودة للصفحة الرئيسية
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Login Page -->
+        <div id="adminLoginPage" class="page-section">
+            <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+                <h2 class="text-2xl font-bold text-center mb-6">
+                    <i class="fas fa-shield-alt text-red-600 ml-2"></i>
+                    دخول الإدارة
+                </h2>
+                <form id="adminLoginForm">
+                    <div class="mb-4">
+                        <label for="adminCode" class="block text-sm font-medium text-gray-700 mb-2">
+                            كود الإدارة
+                        </label>
+                        <input 
+                            type="password" 
+                            id="adminCode" 
+                            name="adminCode" 
+                            required
+                            placeholder="أدخل كود الإدارة"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-right"
+                        >
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-200"
+                    >
+                        <i class="fas fa-spinner spinner loading ml-2"></i>
+                        دخول الإدارة
+                    </button>
+                </form>
+                <div class="mt-4 text-center">
+                    <button 
+                        id="backToPublicFromAdminBtn" 
+                        class="text-blue-600 hover:text-blue-800 text-sm"
+                    >
+                        العودة للصفحة الرئيسية
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marketer Dashboard -->
+        <div id="marketerDashboard" class="page-section">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">
+                        <i class="fas fa-tachometer-alt text-blue-600 ml-2"></i>
+                        لوحة تحكم المسوق
+                    </h2>
+                    <button 
+                        id="logoutBtn" 
+                        class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200"
+                    >
+                        <i class="fas fa-sign-out-alt ml-2"></i>
+                        تسجيل الخروج
+                    </button>
+                </div>
+
+                <!-- Tabs -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex space-x-8" role="tablist">
+                        <button id="myDataTab" class="tab-button active py-2 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600 whitespace-nowrap">
+                            <i class="fas fa-user ml-2"></i>
+                            بياناتي
+                        </button>
+                        <button id="myClientsTab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                            <i class="fas fa-users ml-2"></i>
+                            عملائي
+                        </button>
+                        <button id="myPaymentsTab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                            <i class="fas fa-credit-card ml-2"></i>
+                            مدفوعاتي
+                        </button>
+                        <button id="requestPaymentTab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                            <i class="fas fa-money-bill-wave ml-2"></i>
+                            طلب دفع
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Contents -->
+                
+                <!-- My Data Tab -->
+                <div id="myDataContent" class="tab-content active">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-blue-800 mb-2">الاسم</h3>
+                                <p id="marketerName" class="text-blue-600 text-lg">-</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-green-800 mb-2">الكود</h3>
+                                <p id="marketerCode" class="text-green-600 text-lg font-mono">-</p>
+                            </div>
+                            <div class="bg-purple-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-purple-800 mb-2">رقم الجوال</h3>
+                                <p id="marketerPhone" class="text-purple-600 text-lg">-</p>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-orange-800 mb-2">تاريخ التسجيل</h3>
+                                <p id="marketerDate" class="text-orange-600">-</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-yellow-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-yellow-800 mb-2">المتبقي</h3>
+                                <p id="remainingAmount" class="text-yellow-600 text-2xl font-bold">$0.00</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h3 class="font-semibold text-gray-800 mb-2">رابط الواتساب</h3>
+                                <div class="flex items-center gap-2">
+                                    <input id="whatsappLink" readonly class="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm text-right" />
+                                    <button id="copyWhatsappBtn" class="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Clients Tab -->
+                <div id="myClientsContent" class="tab-content">
+                    <div class="mb-4">
+                        <div class="bg-blue-50 p-4 rounded-lg flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold text-blue-800">إجمالي الأرباح</h3>
+                                <p id="totalProfitClients" class="text-blue-600 text-2xl font-bold">$0.00</p>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-blue-800">عدد العملاء</h3>
+                                <p id="totalClientsCount" class="text-blue-600 text-2xl font-bold">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-gray-300">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="border border-gray-300 px-4 py-2 text-right">رقم العميل</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-right">الاسم</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-right">السعر</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myClientsTable">
+                                <tr>
+                                    <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                                        <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                                        لا توجد عملاء
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- My Payments Tab -->
+                <div id="myPaymentsContent" class="tab-content">
+                    <div class="mb-4">
+                        <div class="bg-green-50 p-4 rounded-lg flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold text-green-800">مجموع الدفعات</h3>
+                                <p id="totalPaymentsAmount" class="text-green-600 text-2xl font-bold">$0.00</p>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-green-800">كود المسوق</h3>
+                                <p id="paymentMarketerCode" class="text-green-600 text-lg font-mono">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse border border-gray-300">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="border border-gray-300 px-4 py-2 text-right">رقم العملية</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-right">مبلغ الدفع</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-right">الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myPaymentsTable">
+                                <tr>
+                                    <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                                        <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                                        لا توجد دفعات
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Request Payment Tab -->
+                <div id="requestPaymentContent" class="tab-content">
+                    <div class="max-w-md mx-auto">
+                        <form id="paymentRequestForm">
+                            <div class="mb-4">
+                                <label for="paymentName" class="block text-sm font-medium text-gray-700 mb-2">
+                                    الاسم
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="paymentName" 
+                                    name="paymentName" 
+                                    readonly
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
+                                >
+                            </div>
+                            <div class="mb-4">
+                                <label for="paymentCode" class="block text-sm font-medium text-gray-700 mb-2">
+                                    الكود
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="paymentCode" 
+                                    name="paymentCode" 
+                                    readonly
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
+                                >
+                            </div>
+                            <div class="mb-4">
+                                <label for="paymentPhone" class="block text-sm font-medium text-gray-700 mb-2">
+                                    رقم الجوال
+                                </label>
+                                <input 
+                                    type="tel" 
+                                    id="paymentPhone" 
+                                    name="paymentPhone" 
+                                    readonly
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
+                                >
+                            </div>
+                            <div class="mb-4">
+                                <label for="paymentDate" class="block text-sm font-medium text-gray-700 mb-2">
+                                    التاريخ
+                                </label>
+                                <input 
+                                    type="date" 
+                                    id="paymentDate" 
+                                    name="paymentDate" 
+                                    readonly
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
+                                >
+                            </div>
+                            <div class="mb-4">
+                                <label for="paymentAmount" class="block text-sm font-medium text-gray-700 mb-2">
+                                    مبلغ الدفع
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="paymentAmount" 
+                                    name="paymentAmount" 
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                    placeholder="أدخل المبلغ المطلوب"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
+                                >
+                                <p class="text-sm text-gray-600 mt-1">المتبقي: <span id="availableAmount">$0.00</span></p>
+                            </div>
+                            <button 
+                                type="submit" 
+                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
+                            >
+                                <i class="fas fa-spinner spinner loading ml-2"></i>
+                                حفظ الطلب
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="page-section">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">
+                        <i class="fas fa-cogs text-red-600 ml-2"></i>
+                        إدارة الطلبات
+                    </h2>
+                    <button 
+                        id="adminLogoutBtn" 
+                        class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200"
+                    >
+                        <i class="fas fa-sign-out-alt ml-2"></i>
+                        تسجيل الخروج
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border border-gray-300 px-4 py-2 text-right">رقم العملية</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">الاسم</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">الكود</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">رقم الجوال</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">مبلغ الدفع</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">الحالة</th>
+                                <th class="border border-gray-300 px-4 py-2 text-right">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPaymentsTable">
+                            <tr>
+                                <td colspan="8" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                                    <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                                    لا توجد طلبات دفع
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        const state = {
+            currentPage: 'publicView',
+            currentMarketer: null,
+            allMarketers: [],
+            isAdmin: false,
+            currentTab: 'myData'
+        };
+
+        // Configuration
+        const config = {
+            apiBaseUrl: '/api',
+            adminCode: '###alaqrab000man@@@',
+            whatsappNumber: '967714045679'
+        };
+
+        // Utility Functions
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            state.currentPage = pageId;
+        }
+
+        function showTab(tabId) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active', 'border-blue-500', 'text-blue-600');
+                button.classList.add('border-transparent', 'text-gray-500');
+            });
+            document.getElementById(tabId + 'Tab').classList.add('active', 'border-blue-500', 'text-blue-600');
+            document.getElementById(tabId + 'Tab').classList.remove('border-transparent', 'text-gray-500');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabId + 'Content').classList.add('active');
+            state.currentTab = tabId;
+        }
+
+        function showLoading(show = true) {
+            const loading = document.getElementById('globalLoading');
+            if (show) {
+                loading.classList.add('active');
+            } else {
+                loading.classList.remove('active');
+            }
+        }
+
+        function showMessage(message, type = 'error') {
+            const messageDiv = document.getElementById(type + 'Message');
+            const messageText = document.getElementById(type + 'Text');
+            messageText.textContent = message;
+            messageDiv.classList.add('active');
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                messageDiv.classList.remove('active');
+            }, 5000);
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').classList.remove('active');
+            document.getElementById('successMessage').classList.remove('active');
+        }
+
+        function generateMarketerCode() {
+            const prefix = 'MKT';
+            const randomNum = Math.floor(Math.random() * 900) + 100; // 100-999
+            return prefix + randomNum.toString().padStart(3, '0');
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount || 0);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            return new Date(dateString).toLocaleDateString('ar-SA');
+        }
+
+        function getCurrentDate() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        // API Functions
+        async function apiRequest(endpoint, options = {}) {
+            try {
+                showLoading(true);
+                
+                const url = `${config.apiBaseUrl}${endpoint}`;
+                const fetchOptions = {
+                    method: options.method || 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    ...options
+                };
+
+                if (options.body) {
+                    fetchOptions.body = JSON.stringify(options.body);
+                }
+
+                const response = await fetch(url, fetchOptions);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || data.message || 'Unknown error');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API Request failed:', error);
+                showMessage(error.message || 'خطأ في الاتصال بالخادم', 'error');
+                throw error;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Configuration functions
+        async function setSpreadsheetId(spreadsheetId) {
+            try {
+                const data = await apiRequest('/config/spreadsheet', {
+                    method: 'POST',
+                    body: { spreadsheetId }
+                });
+                
+                showMessage('تم تعيين معرف الجدول بنجاح', 'success');
+                return data;
+            } catch (error) {
+                console.error('Error setting spreadsheet ID:', error);
+                throw error;
+            }
+        }
+
+        // Data Functions
+        async function loadPublicMarketers() {
+            try {
+                const data = await apiRequest('/marketers');
+                state.allMarketers = data.marketers || [];
+                displayPublicMarketers();
+                
+                // Hide setup message when data loads successfully
+                document.getElementById('setupMessage').classList.remove('active');
+            } catch (error) {
+                console.error('Failed to load marketers:', error);
+                state.allMarketers = [];
+                displayPublicMarketers();
+                
+                // Keep setup message visible
+                if (error.message.includes('معرف الجدول غير محدد')) {
+                    document.getElementById('setupMessage').classList.add('active');
+                }
+            }
+        }
+
+        function displayPublicMarketers() {
+            const tableBody = document.getElementById('publicMarketersTable');
+            
+            if (state.allMarketers.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                            لا توجد بيانات
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = state.allMarketers.map(marketer => {
+                return `
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2 font-mono">${marketer.code || '-'}</td>
+                        <td class="border border-gray-300 px-4 py-2">${marketer.name || '-'}</td>
+                        <td class="border border-gray-300 px-4 py-2 text-center font-bold text-blue-600">${marketer.clientCount || 0}</td>
+                        <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(marketer.totalProfit || 0)}</td>
+                        <td class="border border-gray-300 px-4 py-2">${formatDate(marketer.date)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function loginMarketer(phoneNumber) {
+            try {
+                const data = await apiRequest('/marketers/login', {
+                    method: 'POST',
+                    body: { phone: phoneNumber }
+                });
+                
+                if (data.success && data.marketer) {
+                    state.currentMarketer = data.marketer;
+                    showPage('marketerDashboard');
+                    loadMarketerData();
+                    showMessage('تم تسجيل الدخول بنجاح', 'success');
+                } else {
+                    showMessage('رقم الجوال غير مسجل في النظام', 'error');
+                }
+            } catch (error) {
+                // Error already handled in apiRequest
+            }
+        }
+
+        async function registerMarketer(formData) {
+            try {
+                const data = await apiRequest('/marketers/register', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (data.success) {
+                    showMessage('تم تسجيل المسوق بنجاح', 'success');
+                    setTimeout(() => {
+                        showPage('publicView');
+                        loadPublicMarketers();
+                    }, 2000);
+                }
+            } catch (error) {
+                // Error already handled in apiRequest
+            }
+        }
+
+        async function loadMarketerData() {
+            if (!state.currentMarketer) return;
+            
+            try {
+                const data = await apiRequest(`/marketers/${state.currentMarketer.code}`);
+                
+                if (data.success) {
+                    state.currentMarketer = { ...state.currentMarketer, ...data.marketer };
+                    displayMarketerData();
+                }
+            } catch (error) {
+                console.error('Failed to load marketer data:', error);
+            }
+        }
+
+        function displayMarketerData() {
+            const marketer = state.currentMarketer;
+            if (!marketer) return;
+
+            // My Data Tab
+            document.getElementById('marketerName').textContent = marketer.name || '-';
+            document.getElementById('marketerCode').textContent = marketer.code || '-';
+            document.getElementById('marketerPhone').textContent = marketer.phone || '-';
+            document.getElementById('marketerDate').textContent = formatDate(marketer.date);
+
+            // Calculate totals
+            const totalProfit = marketer.clients ? 
+                marketer.clients.reduce((sum, client) => sum + (parseFloat(client.price) || 0), 0) : 0;
+            const totalPayments = marketer.payments ? 
+                marketer.payments.reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0) : 0;
+            const remaining = totalProfit - totalPayments;
+
+            document.getElementById('remainingAmount').textContent = formatCurrency(remaining);
+
+            // WhatsApp link
+            const whatsappLink = `https://wa.me/${config.whatsappNumber}?text=كودالخصم${marketer.code}`;
+            document.getElementById('whatsappLink').value = whatsappLink;
+
+            // My Clients Tab
+            document.getElementById('totalProfitClients').textContent = formatCurrency(totalProfit);
+            document.getElementById('totalClientsCount').textContent = marketer.clients ? marketer.clients.length : 0;
+
+            const clientsTable = document.getElementById('myClientsTable');
+            if (marketer.clients && marketer.clients.length > 0) {
+                clientsTable.innerHTML = marketer.clients.map(client => `
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">${client.id || '-'}</td>
+                        <td class="border border-gray-300 px-4 py-2">${client.name || '-'}</td>
+                        <td class="border border-gray-300 px-4 py-2">${formatDate(client.date)}</td>
+                        <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(client.price)}</td>
+                    </tr>
+                `).join('');
+            } else {
+                clientsTable.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                            لا توجد عملاء
+                        </td>
+                    </tr>
+                `;
+            }
+
+            // My Payments Tab
+            document.getElementById('totalPaymentsAmount').textContent = formatCurrency(totalPayments);
+            document.getElementById('paymentMarketerCode').textContent = marketer.code || '-';
+
+            const paymentsTable = document.getElementById('myPaymentsTable');
+            if (marketer.payments && marketer.payments.length > 0) {
+                paymentsTable.innerHTML = marketer.payments.map(payment => `
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">${payment.id || '-'}</td>
+                        <td class="border border-gray-300 px-4 py-2">${formatDate(payment.date)}</td>
+                        <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(payment.amount)}</td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <span class="px-2 py-1 text-xs rounded-full ${
+                                payment.status === 'تم التحويل' ? 
+                                'bg-green-100 text-green-800' : 
+                                'bg-yellow-100 text-yellow-800'
+                            }">
+                                ${payment.status || 'قيد المعالجة'}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                paymentsTable.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                            لا توجد دفعات
+                        </td>
+                    </tr>
+                `;
+            }
+
+            // Request Payment Tab
+            document.getElementById('paymentName').value = marketer.name || '';
+            document.getElementById('paymentCode').value = marketer.code || '';
+            document.getElementById('paymentPhone').value = marketer.phone || '';
+            document.getElementById('paymentDate').value = getCurrentDate();
+            document.getElementById('availableAmount').textContent = formatCurrency(remaining);
+        }
+
+        async function submitPaymentRequest(formData) {
+            try {
+                const data = await apiRequest('/payments/request', {
+                    method: 'POST',
+                    body: {
+                        marketer_code: formData.code,
+                        marketer_name: formData.name,
+                        marketer_phone: formData.phone,
+                        date: formData.date,
+                        amount: formData.amount
+                    }
+                });
+                
+                if (data.success) {
+                    showMessage('تم إرسال طلب الدفع بنجاح', 'success');
+                    document.getElementById('paymentRequestForm').reset();
+                    loadMarketerData(); // Refresh data
+                }
+            } catch (error) {
+                // Error already handled in apiRequest
+            }
+        }
+
+        async function loadAdminPayments() {
+            try {
+                const data = await apiRequest('/payments');
+                displayAdminPayments(data.payments || []);
+            } catch (error) {
+                console.error('Failed to load admin payments:', error);
+            }
+        }
+
+        function displayAdminPayments(payments) {
+            const tableBody = document.getElementById('adminPaymentsTable');
+            
+            if (payments.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                            لا توجد طلبات دفع
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = payments.map(payment => `
+                <tr>
+                    <td class="border border-gray-300 px-4 py-2">${payment.id || '-'}</td>
+                    <td class="border border-gray-300 px-4 py-2">${payment.name || '-'}</td>
+                    <td class="border border-gray-300 px-4 py-2 font-mono">${payment.code || '-'}</td>
+                    <td class="border border-gray-300 px-4 py-2">${payment.phone || '-'}</td>
+                    <td class="border border-gray-300 px-4 py-2">${formatDate(payment.date)}</td>
+                    <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(payment.amount)}</td>
+                    <td class="border border-gray-300 px-4 py-2">
+                        <span class="px-2 py-1 text-xs rounded-full ${
+                            payment.status === 'تم التحويل' ? 
+                            'bg-green-100 text-green-800' : 
+                            'bg-yellow-100 text-yellow-800'
+                        }">
+                            ${payment.status || 'قيد المعالجة'}
+                        </span>
+                    </td>
+                    <td class="border border-gray-300 px-4 py-2">
+                        <select class="payment-status-select px-2 py-1 border border-gray-300 rounded text-sm" data-payment-id="${payment.id}">
+                            <option value="قيد المعالجة" ${payment.status === 'قيد المعالجة' ? 'selected' : ''}>قيد المعالجة</option>
+                            <option value="تم التحويل" ${payment.status === 'تم التحويل' ? 'selected' : ''}>تم التحويل</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Add event listeners for status changes
+            document.querySelectorAll('.payment-status-select').forEach(select => {
+                select.addEventListener('change', async (e) => {
+                    const paymentId = e.target.dataset.paymentId;
+                    const newStatus = e.target.value;
+                    await updatePaymentStatus(paymentId, newStatus);
+                });
+            });
+        }
+
+        async function updatePaymentStatus(paymentId, status) {
+            try {
+                const data = await apiRequest(`/payments/${paymentId}/status`, {
+                    method: 'PUT',
+                    body: { status }
+                });
+                
+                if (data.success) {
+                    showMessage('تم تحديث حالة الدفع بنجاح', 'success');
+                }
+            } catch (error) {
+                loadAdminPayments(); // Refresh to revert changes
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial data
+            loadPublicMarketers();
+
+            // Navigation buttons
+            document.getElementById('showConfigBtn').addEventListener('click', () => {
+                showPage('configPage');
+            });
+
+            document.getElementById('showLoginBtn').addEventListener('click', () => {
+                showPage('loginPage');
+            });
+
+            document.getElementById('showRegisterBtn').addEventListener('click', () => {
+                showPage('registerPage');
+                // Generate code and set date
+                document.getElementById('generatedCode').value = generateMarketerCode();
+                document.getElementById('registrationDate').value = getCurrentDate();
+            });
+
+            document.getElementById('adminLoginBtn').addEventListener('click', () => {
+                showPage('adminLoginPage');
+            });
+
+            // Back buttons
+            document.getElementById('backToPublicBtn').addEventListener('click', () => {
+                showPage('publicView');
+            });
+
+            document.getElementById('backToPublicFromRegisterBtn').addEventListener('click', () => {
+                showPage('publicView');
+            });
+
+            document.getElementById('backToPublicFromAdminBtn').addEventListener('click', () => {
+                showPage('publicView');
+            });
+
+            document.getElementById('backToPublicFromConfigBtn').addEventListener('click', () => {
+                showPage('publicView');
+            });
+
+            // Logout buttons
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                state.currentMarketer = null;
+                showPage('publicView');
+            });
+
+            document.getElementById('adminLogoutBtn').addEventListener('click', () => {
+                state.isAdmin = false;
+                showPage('publicView');
+            });
+
+            // Tab buttons
+            document.getElementById('myDataTab').addEventListener('click', () => showTab('myData'));
+            document.getElementById('myClientsTab').addEventListener('click', () => showTab('myClients'));
+            document.getElementById('myPaymentsTab').addEventListener('click', () => showTab('myPayments'));
+            document.getElementById('requestPaymentTab').addEventListener('click', () => showTab('requestPayment'));
+
+            // Copy WhatsApp link
+            document.getElementById('copyWhatsappBtn').addEventListener('click', () => {
+                const link = document.getElementById('whatsappLink');
+                link.select();
+                document.execCommand('copy');
+                showMessage('تم نسخ الرابط', 'success');
+            });
+
+            // Forms
+            document.getElementById('configForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const spreadsheetId = document.getElementById('spreadsheetId').value.trim();
+                if (spreadsheetId) {
+                    try {
+                        await setSpreadsheetId(spreadsheetId);
+                        setTimeout(() => {
+                            showPage('publicView');
+                            loadPublicMarketers();
+                        }, 1500);
+                    } catch (error) {
+                        // Error already handled in setSpreadsheetId
+                    }
+                }
+            });
+
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const phoneNumber = document.getElementById('phoneNumber').value.trim();
+                if (phoneNumber) {
+                    await loginMarketer(phoneNumber);
+                }
+            });
+
+            document.getElementById('registerForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = {
+                    name: document.getElementById('marketerName').value.trim(),
+                    phone: document.getElementById('marketerPhone').value.trim(),
+                    code: document.getElementById('generatedCode').value,
+                    date: document.getElementById('registrationDate').value
+                };
+                
+                if (formData.name && formData.phone) {
+                    await registerMarketer(formData);
+                }
+            });
+
+            document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const adminCode = document.getElementById('adminCode').value;
+                
+                if (adminCode === config.adminCode) {
+                    state.isAdmin = true;
+                    showPage('adminDashboard');
+                    loadAdminPayments();
+                    showMessage('تم دخول الإدارة بنجاح', 'success');
+                } else {
+                    showMessage('كود الإدارة غير صحيح', 'error');
+                }
+            });
+
+            document.getElementById('paymentRequestForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const amount = parseFloat(document.getElementById('paymentAmount').value);
+                const remaining = parseFloat(document.getElementById('availableAmount').textContent.replace(/[^\d.-]/g, ''));
+                
+                if (amount > remaining) {
+                    showMessage('المبلغ المطلوب أكبر من المتبقي', 'error');
+                    return;
+                }
+                
+                const formData = {
+                    name: document.getElementById('paymentName').value,
+                    code: document.getElementById('paymentCode').value,
+                    phone: document.getElementById('paymentPhone').value,
+                    date: document.getElementById('paymentDate').value,
+                    amount: amount
+                };
+                
+                await submitPaymentRequest(formData);
+            });
+
+            console.log('Marketing Web App initialized');
+        });
+    </script>
+</body>
+</html>
