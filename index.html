@@ -61,14 +61,6 @@
         </div>
 
         <!-- Messages -->
-        <div id="setupMessage" class="message active bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
-            <i class="fas fa-cog ml-2"></i>
-            <span id="setupText">
-                يرجى إعداد معرف Google Sheets أولاً من زر "إعدادات الجدول" أعلاه. تأكد من مشاركة الجدول مع: 
-                <code class="bg-yellow-200 px-1 rounded">id-597@studenttracker-461318.iam.gserviceaccount.com</code>
-            </span>
-        </div>
-
         <div id="errorMessage" class="message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             <i class="fas fa-exclamation-triangle ml-2"></i>
             <span id="errorText"></span>
@@ -88,10 +80,6 @@
                         جميع المسوقين
                     </h2>
                     <div class="flex gap-2">
-                        <button id="showConfigBtn" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700">
-                            <i class="fas fa-cog ml-2"></i>
-                            إعدادات الجدول
-                        </button>
                         <button id="showLoginBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
                             <i class="fas fa-sign-in-alt ml-2"></i>
                             تسجيل الدخول
@@ -108,7 +96,7 @@
                         <thead>
                             <tr class="bg-gray-100">
                                 <th class="border border-gray-300 px-4 py-2 text-right">الكود</th>
-                                <th class="border border-gray-300 px-4 py-2 text-right">الاسم</th>
+                                
                                 <th class="border border-gray-300 px-4 py-2 text-right">عدد العملاء</th>
                                 <th class="border border-gray-300 px-4 py-2 text-right">إجمالي الأرباح</th>
                                 <th class="border border-gray-300 px-4 py-2 text-right">تاريخ التسجيل</th>
@@ -123,56 +111,6 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Configuration Page -->
-        <div id="configPage" class="page-section">
-            <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
-                <h2 class="text-2xl font-bold text-center mb-6">
-                    <i class="fas fa-cog text-purple-600 ml-2"></i>
-                    إعدادات Google Sheets
-                </h2>
-                <form id="configForm">
-                    <div class="mb-4">
-                        <label for="spreadsheetId" class="block text-sm font-medium text-gray-700 mb-2">
-                            معرف الجدول (Spreadsheet ID)
-                        </label>
-                        <input 
-                            type="text" 
-                            id="spreadsheetId" 
-                            name="spreadsheetId" 
-                            required
-                            placeholder="أدخل معرف جدول Google Sheets"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-right"
-                        >
-                        <p class="text-sm text-gray-600 mt-1">يمكنك العثور على المعرف في رابط الجدول بين /d/ و /edit</p>
-                        <div class="mt-3 p-3 bg-blue-50 rounded border border-blue-200">
-                            <p class="text-sm text-blue-800 font-semibold mb-2">خطوات الإعداد:</p>
-                            <ol class="text-sm text-blue-700 space-y-1">
-                                <li>1. قم بإنشاء جدول Google Sheets جديد</li>
-                                <li>2. أنشئ 3 أوراق بالأسماء: المسوقين، sheet2، الدفع</li>
-                                <li>3. شارك الجدول مع: <code class="bg-blue-100 px-1 rounded text-xs">id-597@studenttracker-461318.iam.gserviceaccount.com</code></li>
-                                <li>4. انسخ معرف الجدول من الرابط والصقه هنا</li>
-                            </ol>
-                        </div>
-                    </div>
-                    <button 
-                        type="submit" 
-                        class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition duration-200"
-                    >
-                        <i class="fas fa-spinner spinner loading ml-2"></i>
-                        حفظ الإعدادات
-                    </button>
-                </form>
-                <div class="mt-4 text-center">
-                    <button 
-                        id="backToPublicFromConfigBtn" 
-                        class="text-blue-600 hover:text-blue-800 text-sm"
-                    >
-                        العودة للصفحة الرئيسية
-                    </button>
                 </div>
             </div>
         </div>
@@ -389,7 +327,7 @@
                         <div class="space-y-4">
                             <div class="bg-blue-50 p-4 rounded-lg">
                                 <h3 class="font-semibold text-blue-800 mb-2">الاسم</h3>
-                                <p id="marketerName" class="text-blue-600 text-lg">-</p>
+                                <p id="dashboardMarketerName" class="text-blue-600 text-lg">-</p>
                             </div>
                             <div class="bg-green-50 p-4 rounded-lg">
                                 <h3 class="font-semibold text-green-800 mb-2">الكود</h3>
@@ -397,7 +335,7 @@
                             </div>
                             <div class="bg-purple-50 p-4 rounded-lg">
                                 <h3 class="font-semibold text-purple-800 mb-2">رقم الجوال</h3>
-                                <p id="marketerPhone" class="text-purple-600 text-lg">-</p>
+                                <p id="dashboardMarketerPhone" class="text-purple-600 text-lg">-</p>
                             </div>
                             <div class="bg-orange-50 p-4 rounded-lg">
                                 <h3 class="font-semibold text-orange-800 mb-2">تاريخ التسجيل</h3>
@@ -440,7 +378,7 @@
                         <table class="w-full border-collapse border border-gray-300">
                             <thead>
                                 <tr class="bg-gray-100">
-                                    <th class="border border-gray-300 px-4 py-2 text-right">رقم العميل</th>
+                                    
                                     <th class="border border-gray-300 px-4 py-2 text-right">الاسم</th>
                                     <th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th>
                                     <th class="border border-gray-300 px-4 py-2 text-right">السعر</th>
@@ -448,7 +386,7 @@
                             </thead>
                             <tbody id="myClientsTable">
                                 <tr>
-                                    <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                                    <td colspan="3" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
                                         <i class="fas fa-inbox text-4xl mb-2 block"></i>
                                         لا توجد عملاء
                                     </td>
@@ -554,8 +492,8 @@
                                     type="number" 
                                     id="paymentAmount" 
                                     name="paymentAmount" 
-                                    min="0"
-                                    step="0.01"
+                                    min="10"
+                                    step="5"
                                     required
                                     placeholder="أدخل المبلغ المطلوب"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
@@ -621,585 +559,427 @@
     </div>
 
     <script>
-        // Application State
-        const state = {
-            currentPage: 'publicView',
-            currentMarketer: null,
-            allMarketers: [],
-            isAdmin: false,
-            currentTab: 'myData'
-        };
+    // Application State
+    const state = {
+        currentPage: 'publicView',
+        currentMarketer: null,
+        allMarketers: [],
+        isAdmin: false,
+        currentTab: 'myData'
+    };
 
-        // Configuration
-        const config = {
-            apiBaseUrl: '/api',
-            adminCode: '###alaqrab000man@@@',
-            whatsappNumber: '967714045679'
-        };
+    // Configuration
+    const config = {
+        googleScriptUrl: 'https://script.google.com/macros/s/AKfycbz8yh5Tsg-APSxK84rO8bQl8SY9wAiL6SmMQ2b3KkKQ5F_qFddUQF0qRHD6XZikpXhv/exec', // <-- تأكد من أن هذا هو الرابط الصحيح
+        adminCode: '###alaqrab000man@@@',
+        whatsappNumber: '967714045679'
+    };
 
-        // Utility Functions
-        function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-            state.currentPage = pageId;
+    // --- Utility Functions ---
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        state.currentPage = pageId;
+    }
+
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('active', 'border-blue-500', 'text-blue-600');
+            button.classList.add('border-transparent', 'text-gray-500');
+        });
+        document.getElementById(tabId + 'Tab').classList.add('active', 'border-blue-500', 'text-blue-600');
+        document.getElementById(tabId + 'Tab').classList.remove('border-transparent', 'text-gray-500');
+
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(tabId + 'Content').classList.add('active');
+        state.currentTab = tabId;
+    }
+
+    function showLoading(show = true) {
+        document.getElementById('globalLoading').classList.toggle('active', show);
+    }
+
+    function showMessage(message, type = 'error') {
+        const messageDiv = document.getElementById(type + 'Message');
+        const messageText = document.getElementById(type + 'Text');
+        messageText.textContent = message;
+        messageDiv.classList.add('active');
+        setTimeout(() => messageDiv.classList.remove('active'), 5000);
+    }
+
+    function setButtonLoading(button, isLoading) {
+        const spinner = button.querySelector('.spinner');
+        button.disabled = isLoading;
+        if (spinner) spinner.classList.toggle('active', isLoading);
+    }
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' }).format(amount || 0);
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '-';
+        try {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            return new Date(dateString).toLocaleDateString('ar-EG', options);
+        } catch (e) {
+            return dateString;
         }
+    }
 
-        function showTab(tabId) {
-            // Update tab buttons
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.classList.remove('active', 'border-blue-500', 'text-blue-600');
-                button.classList.add('border-transparent', 'text-gray-500');
-            });
-            document.getElementById(tabId + 'Tab').classList.add('active', 'border-blue-500', 'text-blue-600');
-            document.getElementById(tabId + 'Tab').classList.remove('border-transparent', 'text-gray-500');
+    function getCurrentDate() {
+        return new Date().toISOString().split('T')[0];
+    }
 
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabId + 'Content').classList.add('active');
-            state.currentTab = tabId;
-        }
+    // --- API & Data Functions (Promise-based) ---
 
-        function showLoading(show = true) {
-            const loading = document.getElementById('globalLoading');
-            if (show) {
-                loading.classList.add('active');
-            } else {
-                loading.classList.remove('active');
-            }
-        }
-
-        function showMessage(message, type = 'error') {
-            const messageDiv = document.getElementById(type + 'Message');
-            const messageText = document.getElementById(type + 'Text');
-            messageText.textContent = message;
-            messageDiv.classList.add('active');
-            
-            // Hide after 5 seconds
-            setTimeout(() => {
-                messageDiv.classList.remove('active');
-            }, 5000);
-        }
-
-        function hideMessages() {
-            document.getElementById('errorMessage').classList.remove('active');
-            document.getElementById('successMessage').classList.remove('active');
-        }
-
-        function generateMarketerCode() {
-            const prefix = 'MKT';
-            const randomNum = Math.floor(Math.random() * 900) + 100; // 100-999
-            return prefix + randomNum.toString().padStart(3, '0');
-        }
-
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-            }).format(amount || 0);
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            return new Date(dateString).toLocaleDateString('ar-SA');
-        }
-
-        function getCurrentDate() {
-            return new Date().toISOString().split('T')[0];
-        }
-
-        // API Functions
-        async function apiRequest(endpoint, options = {}) {
-            try {
-                showLoading(true);
-                
-                const url = `${config.apiBaseUrl}${endpoint}`;
-                const fetchOptions = {
-                    method: options.method || 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    ...options
-                };
-
-                if (options.body) {
-                    fetchOptions.body = JSON.stringify(options.body);
-                }
-
-                const response = await fetch(url, fetchOptions);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                
-                if (!data.success) {
-                    throw new Error(data.error || data.message || 'Unknown error');
-                }
-
-                return data;
-            } catch (error) {
-                console.error('API Request failed:', error);
-                showMessage(error.message || 'خطأ في الاتصال بالخادم', 'error');
-                throw error;
-            } finally {
+    function fetchSheet(sheet, filters = {}) {
+        showLoading(true);
+        return new Promise((resolve, reject) => {
+            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+            window[callbackName] = (response) => {
+                delete window[callbackName];
+                document.body.removeChild(script);
                 showLoading(false);
-            }
-        }
+                resolve(response);
+            };
 
-        // Configuration functions
-        async function setSpreadsheetId(spreadsheetId) {
-            try {
-                const data = await apiRequest('/config/spreadsheet', {
-                    method: 'POST',
-                    body: { spreadsheetId }
-                });
-                
-                showMessage('تم تعيين معرف الجدول بنجاح', 'success');
-                return data;
-            } catch (error) {
-                console.error('Error setting spreadsheet ID:', error);
-                throw error;
-            }
-        }
+            const params = new URLSearchParams({ sheet, callback: callbackName, ...filters });
+            const script = document.createElement("script");
+            script.src = `${config.googleScriptUrl}?${params.toString()}`;
 
-        // Data Functions
-        async function loadPublicMarketers() {
-            try {
-                const data = await apiRequest('/marketers');
-                state.allMarketers = data.marketers || [];
-                displayPublicMarketers();
-                
-                // Hide setup message when data loads successfully
-                document.getElementById('setupMessage').classList.remove('active');
-            } catch (error) {
-                console.error('Failed to load marketers:', error);
-                state.allMarketers = [];
-                displayPublicMarketers();
-                
-                // Keep setup message visible
-                if (error.message.includes('معرف الجدول غير محدد')) {
-                    document.getElementById('setupMessage').classList.add('active');
-                }
-            }
-        }
+            script.onerror = () => {
+                delete window[callbackName];
+                if(document.body.contains(script)) document.body.removeChild(script);
+                showLoading(false);
+                reject(new Error('فشل الاتصال بالخادم لجلب البيانات.'));
+            };
+            document.body.appendChild(script);
+        });
+    }
 
-        function displayPublicMarketers() {
-            const tableBody = document.getElementById('publicMarketersTable');
-            
-            if (state.allMarketers.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
-                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
-                            لا توجد بيانات
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tableBody.innerHTML = state.allMarketers.map(marketer => {
-                return `
-                    <tr>
-                        <td class="border border-gray-300 px-4 py-2 font-mono">${marketer.code || '-'}</td>
-                        <td class="border border-gray-300 px-4 py-2">${marketer.name || '-'}</td>
-                        <td class="border border-gray-300 px-4 py-2 text-center font-bold text-blue-600">${marketer.clientCount || 0}</td>
-                        <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(marketer.totalProfit || 0)}</td>
-                        <td class="border border-gray-300 px-4 py-2">${formatDate(marketer.date)}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        async function loginMarketer(phoneNumber) {
-            try {
-                const data = await apiRequest('/marketers/login', {
-                    method: 'POST',
-                    body: { phone: phoneNumber }
-                });
-                
-                if (data.success && data.marketer) {
-                    state.currentMarketer = data.marketer;
-                    showPage('marketerDashboard');
-                    loadMarketerData();
-                    showMessage('تم تسجيل الدخول بنجاح', 'success');
+    function sendData(action, data) {
+        showLoading(true);
+        return new Promise((resolve, reject) => {
+            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+            window[callbackName] = (response) => {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                showLoading(false);
+                if (response && response.success) {
+                    resolve(response);
                 } else {
-                    showMessage('رقم الجوال غير مسجل في النظام', 'error');
+                    reject(new Error(response.message || 'فشل في تنفيذ العملية.'));
                 }
-            } catch (error) {
-                // Error already handled in apiRequest
-            }
+            };
+
+            const params = new URLSearchParams({ action, callback: callbackName, ...data });
+            const script = document.createElement('script');
+            script.src = `${config.googleScriptUrl}?${params.toString()}`;
+
+            script.onerror = () => {
+                delete window[callbackName];
+                if(document.body.contains(script)) document.body.removeChild(script);
+                showLoading(false);
+                reject(new Error('فشل الاتصال بالخادم لإرسال البيانات.'));
+            };
+            document.body.appendChild(script);
+        });
+    }
+
+    // --- Data Loading & Display Functions ---
+
+    async function loadPublicMarketers() {
+        try {
+            const data = await fetchSheet("المسوقين");
+            state.allMarketers = data || [];
+        } catch (error) {
+            showMessage(error.message, 'error');
+            state.allMarketers = [];
         }
+        displayPublicMarketers();
+    }
 
-        async function registerMarketer(formData) {
-            try {
-                const data = await apiRequest('/marketers/register', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (data.success) {
-                    showMessage('تم تسجيل المسوق بنجاح', 'success');
-                    setTimeout(() => {
-                        showPage('publicView');
-                        loadPublicMarketers();
-                    }, 2000);
-                }
-            } catch (error) {
-                // Error already handled in apiRequest
-            }
+    function displayPublicMarketers() {
+        const tableBody = document.getElementById('publicMarketersTable');
+        if (!state.allMarketers || state.allMarketers.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد بيانات</td></tr>`;
+            return;
         }
+        tableBody.innerHTML = state.allMarketers.map(marketer => {
+            const clientCount = marketer.clients ? marketer.clients.length : 0;
+            const totalProfit = marketer.clients ? marketer.clients.reduce((sum, client) => sum + (parseFloat(client.price) || 0), 0) : 0;
+            return `
+                <tr>
+                    <td class="border border-gray-300 px-4 py-2 font-mono">${marketer.code || '-'}</td>
+                    <td class="border border-gray-300 px-4 py-2 text-center font-bold text-blue-600">${clientCount}</td>
+                    <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(totalProfit)}</td>
+                    <td class="border border-gray-300 px-4 py-2">${formatDate(marketer.date)}</td>
+                </tr>
+            `;
+        }).join('');
+    }
 
-        async function loadMarketerData() {
-            if (!state.currentMarketer) return;
-            
-            try {
-                const data = await apiRequest(`/marketers/${state.currentMarketer.code}`);
-                
-                if (data.success) {
-                    state.currentMarketer = { ...state.currentMarketer, ...data.marketer };
-                    displayMarketerData();
-                }
-            } catch (error) {
-                console.error('Failed to load marketer data:', error);
-            }
-        }
-
-        function displayMarketerData() {
-            const marketer = state.currentMarketer;
-            if (!marketer) return;
-
-            // My Data Tab
-            document.getElementById('marketerName').textContent = marketer.name || '-';
-            document.getElementById('marketerCode').textContent = marketer.code || '-';
-            document.getElementById('marketerPhone').textContent = marketer.phone || '-';
-            document.getElementById('marketerDate').textContent = formatDate(marketer.date);
-
-            // Calculate totals
-            const totalProfit = marketer.clients ? 
-                marketer.clients.reduce((sum, client) => sum + (parseFloat(client.price) || 0), 0) : 0;
-            const totalPayments = marketer.payments ? 
-                marketer.payments.reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0) : 0;
-            const remaining = totalProfit - totalPayments;
-
-            document.getElementById('remainingAmount').textContent = formatCurrency(remaining);
-
-            // WhatsApp link
-            const whatsappLink = `https://wa.me/${config.whatsappNumber}?text=كودالخصم${marketer.code}`;
-            document.getElementById('whatsappLink').value = whatsappLink;
-
-            // My Clients Tab
-            document.getElementById('totalProfitClients').textContent = formatCurrency(totalProfit);
-            document.getElementById('totalClientsCount').textContent = marketer.clients ? marketer.clients.length : 0;
-
-            const clientsTable = document.getElementById('myClientsTable');
-            if (marketer.clients && marketer.clients.length > 0) {
-                clientsTable.innerHTML = marketer.clients.map(client => `
-                    <tr>
-                        <td class="border border-gray-300 px-4 py-2">${client.id || '-'}</td>
-                        <td class="border border-gray-300 px-4 py-2">${client.name || '-'}</td>
-                        <td class="border border-gray-300 px-4 py-2">${formatDate(client.date)}</td>
-                        <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(client.price)}</td>
-                    </tr>
-                `).join('');
+    async function loadMarketerData() {
+        if (!state.currentMarketer) return;
+        try {
+            const data = await fetchSheet("بيانات_المسوق", { code: state.currentMarketer.code });
+            if (data && data.length > 0) {
+                state.currentMarketer = data[0]; // Replace with full fresh data
+                displayMarketerData();
             } else {
-                clientsTable.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
-                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
-                            لا توجد عملاء
-                        </td>
-                    </tr>
-                `;
+                throw new Error('فشل في تحديث بيانات المسوق.');
             }
-
-            // My Payments Tab
-            document.getElementById('totalPaymentsAmount').textContent = formatCurrency(totalPayments);
-            document.getElementById('paymentMarketerCode').textContent = marketer.code || '-';
-
-            const paymentsTable = document.getElementById('myPaymentsTable');
-            if (marketer.payments && marketer.payments.length > 0) {
-                paymentsTable.innerHTML = marketer.payments.map(payment => `
-                    <tr>
-                        <td class="border border-gray-300 px-4 py-2">${payment.id || '-'}</td>
-                        <td class="border border-gray-300 px-4 py-2">${formatDate(payment.date)}</td>
-                        <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(payment.amount)}</td>
-                        <td class="border border-gray-300 px-4 py-2">
-                            <span class="px-2 py-1 text-xs rounded-full ${
-                                payment.status === 'تم التحويل' ? 
-                                'bg-green-100 text-green-800' : 
-                                'bg-yellow-100 text-yellow-800'
-                            }">
-                                ${payment.status || 'قيد المعالجة'}
-                            </span>
-                        </td>
-                    </tr>
-                `).join('');
-            } else {
-                paymentsTable.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
-                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
-                            لا توجد دفعات
-                        </td>
-                    </tr>
-                `;
-            }
-
-            // Request Payment Tab
-            document.getElementById('paymentName').value = marketer.name || '';
-            document.getElementById('paymentCode').value = marketer.code || '';
-            document.getElementById('paymentPhone').value = marketer.phone || '';
-            document.getElementById('paymentDate').value = getCurrentDate();
-            document.getElementById('availableAmount').textContent = formatCurrency(remaining);
+        } catch (error) {
+            showMessage(error.message, 'error');
+            // Optional: Logout if data load fails
+            // state.currentMarketer = null;
+            // showPage('publicView');
         }
+    }
 
-        async function submitPaymentRequest(formData) {
-            try {
-                const data = await apiRequest('/payments/request', {
-                    method: 'POST',
-                    body: {
-                        marketer_code: formData.code,
-                        marketer_name: formData.name,
-                        marketer_phone: formData.phone,
-                        date: formData.date,
-                        amount: formData.amount
-                    }
-                });
-                
-                if (data.success) {
-                    showMessage('تم إرسال طلب الدفع بنجاح', 'success');
-                    document.getElementById('paymentRequestForm').reset();
-                    loadMarketerData(); // Refresh data
-                }
-            } catch (error) {
-                // Error already handled in apiRequest
-            }
+    function displayMarketerData() {
+        const marketer = state.currentMarketer;
+        if (!marketer) return;
+
+        // My Data Tab
+        document.getElementById('dashboardMarketerName').textContent = marketer.name || '-';
+        document.getElementById('marketerCode').textContent = marketer.code || '-';
+        document.getElementById('dashboardMarketerPhone').textContent = marketer.phone || '-';
+        document.getElementById('marketerDate').textContent = formatDate(marketer.date);
+
+        const totalProfit = marketer.clients ? marketer.clients.reduce((sum, client) => sum + (parseFloat(client.price) || 0), 0) : 0;
+        const totalPayments = marketer.payments ? marketer.payments.reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0) : 0;
+        const remaining = totalProfit - totalPayments;
+
+        document.getElementById('remainingAmount').textContent = formatCurrency(remaining);
+        document.getElementById('whatsappLink').value = `https://wa.me/${config.whatsappNumber}?text=كودالخصم${marketer.code}`;
+        
+        // My Clients Tab
+        document.getElementById('totalProfitClients').textContent = formatCurrency(totalProfit);
+        document.getElementById('totalClientsCount').textContent = marketer.clients ? marketer.clients.length : 0;
+        const clientsTable = document.getElementById('myClientsTable');
+        if (marketer.clients && marketer.clients.length > 0) {
+            clientsTable.innerHTML = marketer.clients.map(client => `
+                <tr>
+                    <td class="border border-gray-300 px-4 py-2">${client.name || '-'}</td>
+                    <td class="border border-gray-300 px-4 py-2">${formatDate(client.date)}</td>
+                    <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(client.price)}</td>
+                </tr>`).join('');
+        } else {
+            clientsTable.innerHTML = `<tr><td colspan="3" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد عملاء</td></tr>`;
         }
-
-        async function loadAdminPayments() {
-            try {
-                const data = await apiRequest('/payments');
-                displayAdminPayments(data.payments || []);
-            } catch (error) {
-                console.error('Failed to load admin payments:', error);
-            }
-        }
-
-        function displayAdminPayments(payments) {
-            const tableBody = document.getElementById('adminPaymentsTable');
-            
-            if (payments.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
-                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
-                            لا توجد طلبات دفع
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tableBody.innerHTML = payments.map(payment => `
+        
+        // My Payments Tab
+        document.getElementById('totalPaymentsAmount').textContent = formatCurrency(totalPayments);
+        document.getElementById('paymentMarketerCode').textContent = marketer.code || '-';
+        const paymentsTable = document.getElementById('myPaymentsTable');
+        if (marketer.payments && marketer.payments.length > 0) {
+            paymentsTable.innerHTML = marketer.payments.map(payment => `
                 <tr>
                     <td class="border border-gray-300 px-4 py-2">${payment.id || '-'}</td>
-                    <td class="border border-gray-300 px-4 py-2">${payment.name || '-'}</td>
-                    <td class="border border-gray-300 px-4 py-2 font-mono">${payment.code || '-'}</td>
-                    <td class="border border-gray-300 px-4 py-2">${payment.phone || '-'}</td>
                     <td class="border border-gray-300 px-4 py-2">${formatDate(payment.date)}</td>
                     <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(payment.amount)}</td>
-                    <td class="border border-gray-300 px-4 py-2">
-                        <span class="px-2 py-1 text-xs rounded-full ${
-                            payment.status === 'تم التحويل' ? 
-                            'bg-green-100 text-green-800' : 
-                            'bg-yellow-100 text-yellow-800'
-                        }">
-                            ${payment.status || 'قيد المعالجة'}
-                        </span>
-                    </td>
-                    <td class="border border-gray-300 px-4 py-2">
-                        <select class="payment-status-select px-2 py-1 border border-gray-300 rounded text-sm" data-payment-id="${payment.id}">
-                            <option value="قيد المعالجة" ${payment.status === 'قيد المعالجة' ? 'selected' : ''}>قيد المعالجة</option>
-                            <option value="تم التحويل" ${payment.status === 'تم التحويل' ? 'selected' : ''}>تم التحويل</option>
-                        </select>
-                    </td>
-                </tr>
-            `).join('');
-
-            // Add event listeners for status changes
-            document.querySelectorAll('.payment-status-select').forEach(select => {
-                select.addEventListener('change', async (e) => {
-                    const paymentId = e.target.dataset.paymentId;
-                    const newStatus = e.target.value;
-                    await updatePaymentStatus(paymentId, newStatus);
-                });
-            });
+                    <td class="border border-gray-300 px-4 py-2"><span class="px-2 py-1 text-xs rounded-full ${payment.status === 'تم التحويل' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${payment.status || 'قيد المعالجة'}</span></td>
+                </tr>`).join('');
+        } else {
+            paymentsTable.innerHTML = `<tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد دفعات</td></tr>`;
         }
 
-        async function updatePaymentStatus(paymentId, status) {
-            try {
-                const data = await apiRequest(`/payments/${paymentId}/status`, {
-                    method: 'PUT',
-                    body: { status }
-                });
-                
-                if (data.success) {
+        // Request Payment Tab
+        document.getElementById('paymentName').value = marketer.name || '';
+        document.getElementById('paymentCode').value = marketer.code || '';
+        document.getElementById('paymentPhone').value = marketer.phone || '';
+        document.getElementById('paymentDate').value = getCurrentDate();
+        document.getElementById('availableAmount').textContent = formatCurrency(remaining);
+        document.getElementById('paymentAmount').max = remaining > 0 ? remaining.toFixed(2) : '0';
+    }
+
+    async function loadAdminPayments() {
+        try {
+            const payments = await fetchSheet("الدفع");
+            displayAdminPayments(payments || []);
+        } catch (error) {
+            showMessage(error.message, 'error');
+            displayAdminPayments([]);
+        }
+    }
+    
+    function displayAdminPayments(payments) {
+        const tableBody = document.getElementById('adminPaymentsTable');
+        if (payments.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="8" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد طلبات دفع</td></tr>`;
+            return;
+        }
+
+        tableBody.innerHTML = payments.map(payment => `
+            <tr>
+                <td class="border border-gray-300 px-4 py-2">${payment.id || '-'}</td>
+                <td class="border border-gray-300 px-4 py-2">${payment.name || '-'}</td>
+                <td class="border border-gray-300 px-4 py-2 font-mono">${payment.code || '-'}</td>
+                <td class="border border-gray-300 px-4 py-2">${payment.phone || '-'}</td>
+                <td class="border border-gray-300 px-4 py-2">${formatDate(payment.date)}</td>
+                <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(payment.amount)}</td>
+                <td class="border border-gray-300 px-4 py-2"><span class="px-2 py-1 text-xs rounded-full ${payment.status === 'تم التحويل' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${payment.status || 'قيد المعالجة'}</span></td>
+                <td class="border border-gray-300 px-4 py-2">
+                    <select class="payment-status-select px-2 py-1 border border-gray-300 rounded text-sm" data-payment-id="${payment.id}">
+                        <option value="قيد المعالجة" ${payment.status === 'قيد المعالجة' ? 'selected' : ''}>قيد المعالجة</option>
+                        <option value="تم التحويل" ${payment.status === 'تم التحويل' ? 'selected' : ''}>تم التحويل</option>
+                    </select>
+                </td>
+            </tr>
+        `).join('');
+
+        document.querySelectorAll('.payment-status-select').forEach(select => {
+            select.addEventListener('change', async (e) => {
+                const paymentId = e.target.dataset.paymentId;
+                const newStatus = e.target.value;
+                try {
+                    await sendData("update_status", { operationId: paymentId, newStatus: newStatus });
                     showMessage('تم تحديث حالة الدفع بنجاح', 'success');
-                }
-            } catch (error) {
-                loadAdminPayments(); // Refresh to revert changes
-            }
-        }
-
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load initial data
-            loadPublicMarketers();
-
-            // Navigation buttons
-            document.getElementById('showConfigBtn').addEventListener('click', () => {
-                showPage('configPage');
-            });
-
-            document.getElementById('showLoginBtn').addEventListener('click', () => {
-                showPage('loginPage');
-            });
-
-            document.getElementById('showRegisterBtn').addEventListener('click', () => {
-                showPage('registerPage');
-                // Generate code and set date
-                document.getElementById('generatedCode').value = generateMarketerCode();
-                document.getElementById('registrationDate').value = getCurrentDate();
-            });
-
-            document.getElementById('adminLoginBtn').addEventListener('click', () => {
-                showPage('adminLoginPage');
-            });
-
-            // Back buttons
-            document.getElementById('backToPublicBtn').addEventListener('click', () => {
-                showPage('publicView');
-            });
-
-            document.getElementById('backToPublicFromRegisterBtn').addEventListener('click', () => {
-                showPage('publicView');
-            });
-
-            document.getElementById('backToPublicFromAdminBtn').addEventListener('click', () => {
-                showPage('publicView');
-            });
-
-            document.getElementById('backToPublicFromConfigBtn').addEventListener('click', () => {
-                showPage('publicView');
-            });
-
-            // Logout buttons
-            document.getElementById('logoutBtn').addEventListener('click', () => {
-                state.currentMarketer = null;
-                showPage('publicView');
-            });
-
-            document.getElementById('adminLogoutBtn').addEventListener('click', () => {
-                state.isAdmin = false;
-                showPage('publicView');
-            });
-
-            // Tab buttons
-            document.getElementById('myDataTab').addEventListener('click', () => showTab('myData'));
-            document.getElementById('myClientsTab').addEventListener('click', () => showTab('myClients'));
-            document.getElementById('myPaymentsTab').addEventListener('click', () => showTab('myPayments'));
-            document.getElementById('requestPaymentTab').addEventListener('click', () => showTab('requestPayment'));
-
-            // Copy WhatsApp link
-            document.getElementById('copyWhatsappBtn').addEventListener('click', () => {
-                const link = document.getElementById('whatsappLink');
-                link.select();
-                document.execCommand('copy');
-                showMessage('تم نسخ الرابط', 'success');
-            });
-
-            // Forms
-            document.getElementById('configForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const spreadsheetId = document.getElementById('spreadsheetId').value.trim();
-                if (spreadsheetId) {
-                    try {
-                        await setSpreadsheetId(spreadsheetId);
-                        setTimeout(() => {
-                            showPage('publicView');
-                            loadPublicMarketers();
-                        }, 1500);
-                    } catch (error) {
-                        // Error already handled in setSpreadsheetId
-                    }
+                } catch(error) {
+                    showMessage(error.message, 'error');
+                    loadAdminPayments();
                 }
             });
+        });
+    }
 
-            document.getElementById('loginForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
+    // --- Event Listeners Setup ---
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadPublicMarketers();
+
+        // Navigation
+        document.getElementById('showLoginBtn').addEventListener('click', () => showPage('loginPage'));
+        document.getElementById('showRegisterBtn').addEventListener('click', () => {
+            showPage('registerPage');
+            document.getElementById('registrationDate').value = getCurrentDate();
+        });
+        document.getElementById('adminLoginBtn').addEventListener('click', () => showPage('adminLoginPage'));
+        document.getElementById('backToPublicBtn').addEventListener('click', () => showPage('publicView'));
+        document.getElementById('backToPublicFromRegisterBtn').addEventListener('click', () => showPage('publicView'));
+        document.getElementById('backToPublicFromAdminBtn').addEventListener('click', () => showPage('publicView'));
+        document.getElementById('logoutBtn').addEventListener('click', () => { state.currentMarketer = null; showPage('publicView'); });
+        document.getElementById('adminLogoutBtn').addEventListener('click', () => { state.isAdmin = false; showPage('publicView'); });
+        
+        // Tabs
+        document.getElementById('myDataTab').addEventListener('click', () => showTab('myData'));
+        document.getElementById('myClientsTab').addEventListener('click', () => showTab('myClients'));
+        document.getElementById('myPaymentsTab').addEventListener('click', () => showTab('myPayments'));
+        document.getElementById('requestPaymentTab').addEventListener('click', () => showTab('requestPayment'));
+        
+        // Actions
+        document.getElementById('copyWhatsappBtn').addEventListener('click', () => {
+            const link = document.getElementById('whatsappLink');
+            link.select();
+            document.execCommand('copy');
+            showMessage('تم نسخ الرابط', 'success');
+        });
+
+        // --- Forms Submission ---
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const button = e.target.querySelector('button[type="submit"]');
+            setButtonLoading(button, true);
+            try {
                 const phoneNumber = document.getElementById('phoneNumber').value.trim();
-                if (phoneNumber) {
-                    await loginMarketer(phoneNumber);
-                }
-            });
+                if (!phoneNumber) throw new Error("يرجى إدخال رقم الجوال.");
+                const data = await sendData("loginMarketer", { phone: phoneNumber });
+                state.currentMarketer = data.marketer;
+                showPage('marketerDashboard');
+                await loadMarketerData();
+                showMessage('تم تسجيل الدخول بنجاح', 'success');
+            } catch (error) {
+                showMessage(error.message, 'error');
+            } finally {
+                setButtonLoading(button, false);
+            }
+        });
 
-            document.getElementById('registerForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const button = e.target.querySelector('button[type="submit"]');
+            setButtonLoading(button, true);
+            try {
                 const formData = {
                     name: document.getElementById('marketerName').value.trim(),
                     phone: document.getElementById('marketerPhone').value.trim(),
-                    code: document.getElementById('generatedCode').value,
                     date: document.getElementById('registrationDate').value
                 };
-                
-                if (formData.name && formData.phone) {
-                    await registerMarketer(formData);
-                }
-            });
+                if (!formData.name || !formData.phone) throw new Error("يرجى ملء جميع الحقول.");
+                await sendData("add_marketer", formData);
+                showMessage('تم تسجيل المسوق بنجاح', 'success');
+                e.target.reset();
+                setTimeout(() => {
+                    showPage('publicView');
+                    loadPublicMarketers();
+                }, 1500);
+            } catch (error) {
+                showMessage(error.message, 'error');
+            } finally {
+                setButtonLoading(button, false);
+            }
+        });
 
-            document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
-                e.preventDefault();
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const button = e.target.querySelector('button[type="submit"]');
+            setButtonLoading(button, true);
+            try {
                 const adminCode = document.getElementById('adminCode').value;
-                
                 if (adminCode === config.adminCode) {
                     state.isAdmin = true;
                     showPage('adminDashboard');
-                    loadAdminPayments();
+                    await loadAdminPayments();
                     showMessage('تم دخول الإدارة بنجاح', 'success');
                 } else {
-                    showMessage('كود الإدارة غير صحيح', 'error');
+                    throw new Error('كود الإدارة غير صحيح');
                 }
-            });
+            } catch(error) {
+                showMessage(error.message, 'error');
+            } finally {
+                setButtonLoading(button, false);
+            }
+        });
 
-            document.getElementById('paymentRequestForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const amount = parseFloat(document.getElementById('paymentAmount').value);
-                const remaining = parseFloat(document.getElementById('availableAmount').textContent.replace(/[^\d.-]/g, ''));
+        document.getElementById('paymentRequestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const button = e.target.querySelector('button[type="submit"]');
+            setButtonLoading(button, true);
+            try {
+                if (!state.currentMarketer) throw new Error('جلسة غير صالحة. يرجى تسجيل الخروج والدخول مرة أخرى.');
+                const requestedAmount = parseFloat(document.getElementById('paymentAmount').value);
+                const totalProfit = state.currentMarketer.clients.reduce((s, c) => s + (parseFloat(c.price) || 0), 0);
+                const totalPayments = state.currentMarketer.payments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
+                const availableBalance = totalProfit - totalPayments;
                 
-                if (amount > remaining) {
-                    showMessage('المبلغ المطلوب أكبر من المتبقي', 'error');
-                    return;
-                }
+                if (isNaN(requestedAmount) || requestedAmount <= 0) throw new Error('يجب إدخال مبلغ صحيح أكبر من صفر.');
+                if (requestedAmount > availableBalance) throw new Error('المبلغ المطلوب أكبر من الرصيد المتاح.');
                 
                 const formData = {
+                    operationId: 'PAY' + Date.now(),
                     name: document.getElementById('paymentName').value,
                     code: document.getElementById('paymentCode').value,
                     phone: document.getElementById('paymentPhone').value,
                     date: document.getElementById('paymentDate').value,
-                    amount: amount
+                    amount: requestedAmount,
+                    status: 'قيد المعالجة'
                 };
                 
-                await submitPaymentRequest(formData);
-            });
-
-            console.log('Marketing Web App initialized');
+                await sendData("add_payment_request", formData);
+                showMessage('تم إرسال طلب الدفع بنجاح.', 'success');
+                e.target.reset();
+                await loadMarketerData();
+            } catch (error) {
+                showMessage(error.message, 'error');
+            } finally {
+                setButtonLoading(button, false);
+            }
         });
-    </script>
+    });
+</script>
 </body>
 </html>
