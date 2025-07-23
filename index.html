@@ -27,6 +27,43 @@
         input[type=number] {
           -moz-appearance: textfield;
         }
+
+        /* --- START: كود البطاقات الجديد --- */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .data-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.2s ease-in-out;
+        }
+        .data-card:hover {
+             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .data-card .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .data-card .card-row:last-child {
+            border-bottom: none;
+        }
+        .data-card .card-label {
+            font-weight: 600;
+            color: #4b5563; /* text-gray-600 */
+        }
+        .data-card .card-value {
+            color: #111827; /* text-gray-900 */
+            text-align: left;
+        }
+        /* --- END: نهاية كود البطاقات --- */
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -132,7 +169,7 @@
                 </div>
                 
                 <div class="border-b border-gray-200 mb-6">
-                    <nav class="-mb-px flex flex-wrap -mx-4" role="tablist">
+                    <nav class="-mb-px flex flex-nowrap overflow-x-auto space-x-2 sm:space-x-4" role="tablist">
                         <button id="myDataTab" class="tab-button active py-2 px-4 border-b-2 border-blue-500 font-medium text-sm text-blue-600 whitespace-nowrap"><i class="fas fa-user ml-2"></i>بياناتي</button>
                         <button id="myClientsTab" class="tab-button py-2 px-4 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap"><i class="fas fa-users ml-2"></i>عملائي</button>
                         <button id="myPaymentsTab" class="tab-button py-2 px-4 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap"><i class="fas fa-credit-card ml-2"></i>مدفوعاتي</button>
@@ -144,15 +181,53 @@
                     <div class="grid md:grid-cols-2 gap-6"><div class="space-y-4"><div class="bg-blue-50 p-4 rounded-lg"><h3 class="font-semibold text-blue-800 mb-2">الاسم</h3><p id="dashboardMarketerName" class="text-blue-600 text-lg">-</p></div><div class="bg-green-50 p-4 rounded-lg"><h3 class="font-semibold text-green-800 mb-2">الكود</h3><p id="marketerCode" class="text-green-600 text-lg font-mono">-</p></div><div class="bg-purple-50 p-4 rounded-lg"><h3 class="font-semibold text-purple-800 mb-2">رقم الجوال</h3><p id="dashboardMarketerPhone" class="text-purple-600 text-lg">-</p></div><div class="bg-orange-50 p-4 rounded-lg"><h3 class="font-semibold text-orange-800 mb-2">تاريخ التسجيل</h3><p id="marketerDate" class="text-orange-600">-</p></div></div><div class="space-y-4"><div class="bg-yellow-50 p-4 rounded-lg"><h3 class="font-semibold text-yellow-800 mb-2">المتبقي</h3><p id="remainingAmount" class="text-yellow-600 text-2xl font-bold">$0.00</p></div><div class="bg-gray-50 p-4 rounded-lg"><h3 class="font-semibold text-gray-800 mb-2">رابط الواتساب</h3><div class="flex items-center gap-2"><textarea id="whatsappLink" readonly rows="5" class="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm text-right resize-none"></textarea><button id="copyWhatsappBtn" class="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700"><i class="fas fa-copy"></i></button></div></div></div></div>
                 </div>
 
+                <!-- START: تعديل تبويب عملائي -->
                 <div id="myClientsContent" class="tab-content">
-                    <div class="mb-4"><div class="bg-blue-50 p-4 rounded-lg flex justify-between items-center"><div><h3 class="font-semibold text-blue-800">إجمالي الأرباح</h3><p id="totalProfitClients" class="text-blue-600 text-2xl font-bold">$0.00</p></div><div><h3 class="font-semibold text-blue-800">عدد العملاء</h3><p id="totalClientsCount" class="text-blue-600 text-2xl font-bold">0</p></div></div></div>
-                    <div class="overflow-x-auto"><table class="w-full border-collapse border border-gray-300"><thead><tr class="bg-gray-100"><th class="border border-gray-300 px-4 py-2 text-right">الاسم</th><th class="border border-gray-300 px-4 py-2 text-right">رقم العميل</th><th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th><th class="border border-gray-300 px-4 py-2 text-right">الربح</th></tr></thead><tbody id="myClientsTable"><tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا يوجد عملاء بعد</td></tr></tbody></table></div>
+                    <div class="mb-4">
+                        <div class="bg-blue-50 p-4 rounded-lg flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold text-blue-800">إجمالي الأرباح</h3>
+                                <p id="totalProfitClients" class="text-blue-600 text-2xl font-bold">$0.00</p>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-blue-800">عدد العملاء</h3>
+                                <p id="totalClientsCount" class="text-blue-600 text-2xl font-bold">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- حاوية البطاقات الجديدة -->
+                    <div id="myClientsCards" class="card-container">
+                        <div class="text-center text-gray-500 py-8 col-span-full">
+                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                            لا يوجد عملاء بعد
+                        </div>
+                    </div>
                 </div>
+                <!-- END: تعديل تبويب عملائي -->
 
+                <!-- START: تعديل تبويب مدفوعاتي -->
                 <div id="myPaymentsContent" class="tab-content">
-                    <div class="mb-4"><div class="bg-green-50 p-4 rounded-lg flex justify-between items-center"><div><h3 class="font-semibold text-green-800">مجموع الدفعات</h3><p id="totalPaymentsAmount" class="text-green-600 text-2xl font-bold">$0.00</p></div><div><h3 class="font-semibold text-green-800">كود المسوق</h3><p id="paymentMarketerCode" class="text-green-600 text-lg font-mono">-</p></div></div></div>
-                    <div class="overflow-x-auto"><table class="w-full border-collapse border border-gray-300"><thead><tr class="bg-gray-100"><th class="border border-gray-300 px-4 py-2 text-right">رقم العملية</th><th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th><th class="border border-gray-300 px-4 py-2 text-right">مبلغ الدفع</th><th class="border border-gray-300 px-4 py-2 text-right">الحالة</th></tr></thead><tbody id="myPaymentsTable"><tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد دفعات سابقة</td></tr></tbody></table></div>
+                    <div class="mb-4">
+                        <div class="bg-green-50 p-4 rounded-lg flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold text-green-800">مجموع الدفعات</h3>
+                                <p id="totalPaymentsAmount" class="text-green-600 text-2xl font-bold">$0.00</p>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-green-800">كود المسوق</h3>
+                                <p id="paymentMarketerCode" class="text-green-600 text-lg font-mono">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- حاوية البطاقات الجديدة -->
+                    <div id="myPaymentsCards" class="card-container">
+                         <div class="text-center text-gray-500 py-8 col-span-full">
+                            <i class="fas fa-inbox text-4xl mb-2 block"></i>
+                            لا توجد دفعات سابقة
+                        </div>
+                    </div>
                 </div>
+                <!-- END: تعديل تبويب مدفوعاتي -->
                 
                 <div id="requestPaymentContent" class="tab-content">
                     <div class="max-w-md mx-auto bg-gray-50 p-6 rounded-lg border">
@@ -198,7 +273,23 @@
 
     // --- Utility Functions ---
     function showPage(pageId) { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById(pageId).classList.add('active'); state.currentPage = pageId; }
-    function showTab(tabId) { document.querySelectorAll('.tab-button').forEach(b => { b.classList.remove('active', 'border-blue-500', 'text-blue-600'); b.classList.add('border-transparent', 'text-gray-500'); }); document.getElementById(tabId + 'Tab').classList.add('active', 'border-blue-500', 'text-blue-600'); document.getElementById(tabId + 'Tab').classList.remove('border-transparent', 'text-gray-500'); document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); document.getElementById(tabId + 'Content').classList.add('active'); state.currentTab = tabId; }
+    function showTab(tabId) { 
+        document.querySelectorAll('.tab-button').forEach(b => { 
+            b.classList.remove('active', 'border-blue-500', 'text-blue-600'); 
+            b.classList.add('border-transparent', 'text-gray-500'); 
+        }); 
+        const activeTab = document.getElementById(tabId + 'Tab');
+        if (activeTab) {
+            activeTab.classList.add('active', 'border-blue-500', 'text-blue-600'); 
+            activeTab.classList.remove('border-transparent', 'text-gray-500'); 
+        }
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); 
+        const activeContent = document.getElementById(tabId + 'Content');
+        if (activeContent) {
+            activeContent.classList.add('active'); 
+        }
+        state.currentTab = tabId; 
+    }
     function showLoading(show = true) { document.getElementById('globalLoading').classList.toggle('active', show); }
     function showMessage(message, type = 'error') { const el = document.getElementById(type + 'Message'); const text = document.getElementById(type + 'Text'); text.textContent = message; el.classList.add('active'); setTimeout(() => el.classList.remove('active'), 5000); }
     function setButtonLoading(button, isLoading) { const spinner = button.querySelector('.spinner'); button.disabled = isLoading; if (spinner) spinner.classList.toggle('active', isLoading); }
@@ -259,36 +350,90 @@
             else { throw new Error('فشل في تحديث بيانات المسوق. قد تكون الجلسة منتهية.'); }
         } catch (error) { showMessage(error.message, 'error'); handleLogout(); }
     }
+    
+    // START: تعديل دالة العرض الرئيسية
     function displayMarketerData() {
         const marketer = state.currentMarketer;
         if (!marketer) return;
+        
         const validClients = (marketer.clients && Array.isArray(marketer.clients)) ? marketer.clients : [];
         const validPayments = (marketer.payments && Array.isArray(marketer.payments)) ? marketer.payments : [];
         const totalProfit = validClients.filter(client => client && client.id && normalizePhoneNumber(client.id).startsWith('966')).length * 10;
         const totalPayments = validPayments.reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0);
         const remaining = totalProfit - totalPayments;
+        
         document.getElementById('dashboardMarketerName').textContent = marketer.name || '-';
         document.getElementById('marketerCode').textContent = marketer.code || '-';
         document.getElementById('dashboardMarketerPhone').textContent = marketer.phone || '-';
         document.getElementById('marketerDate').textContent = formatDate(marketer.date);
         document.getElementById('remainingAmount').textContent = formatCurrency(remaining);
         document.getElementById('whatsappLink').value = `السلام عليك\nتعال أساعدك والدفع بعد الحل  وفيه خصم لأول مره عشان تتأكد من الشغل بنفسك\n\nوهذا رقم الواتساب مع كود الخصم:\nhttps://wa.me/${config.whatsappNumber}?text=كودالخصم${marketer.code}`;
+        
+        // --- تعديل قسم العملاء ---
         document.getElementById('totalProfitClients').textContent = formatCurrency(totalProfit);
         document.getElementById('totalClientsCount').textContent = validClients.length;
-        const clientsTable = document.getElementById('myClientsTable');
+        const clientsContainer = document.getElementById('myClientsCards');
         if (validClients.length > 0) {
-            clientsTable.innerHTML = validClients.map(client => {
+            clientsContainer.innerHTML = validClients.map(client => {
                 if (!client) return '';
                 const isSaudi = normalizePhoneNumber(client.id || '').startsWith('966');
-                return `<tr><td class="border border-gray-300 px-4 py-2">${client.name || '-'}</td><td class="border border-gray-300 px-4 py-2 font-mono">${isSaudi ? '********' : (client.id || '-')}</td><td class="border border-gray-300 px-4 py-2">${formatDate(client.date)}</td><td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(isSaudi ? 10 : 0)}</td></tr>`;
+                const profit = isSaudi ? 10 : 0;
+                return `
+                <div class="data-card">
+                    <div class="card-row">
+                        <span class="card-label">الاسم:</span>
+                        <span class="card-value">${client.name || '-'}</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="card-label">رقم العميل:</span>
+                        <span class="card-value font-mono">${isSaudi ? '********' : (client.id || '-')}</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="card-label">التاريخ:</span>
+                        <span class="card-value">${formatDate(client.date)}</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="card-label">الربح:</span>
+                        <span class="card-value font-bold text-green-600">${formatCurrency(profit)}</span>
+                    </div>
+                </div>`;
             }).join('');
-        } else { clientsTable.innerHTML = `<tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا يوجد عملاء بعد</td></tr>`; }
+        } else { 
+            clientsContainer.innerHTML = `<div class="text-center text-gray-500 py-8 col-span-full"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا يوجد عملاء بعد</div>`; 
+        }
+
+        // --- تعديل قسم المدفوعات ---
         document.getElementById('totalPaymentsAmount').textContent = formatCurrency(totalPayments);
         document.getElementById('paymentMarketerCode').textContent = marketer.code || '-';
-        const paymentsTable = document.getElementById('myPaymentsTable');
+        const paymentsContainer = document.getElementById('myPaymentsCards');
         if (validPayments.length > 0) {
-            paymentsTable.innerHTML = validPayments.map(p => `<tr><td class="border border-gray-300 px-4 py-2">${p.id || '-'}</td><td class="border border-gray-300 px-4 py-2">${formatDate(p.date)}</td><td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(p.amount)}</td><td class="border border-gray-300 px-4 py-2"><span class="px-2 py-1 text-xs rounded-full ${p.status === 'تم التحويل' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${p.status || 'قيد المعالجة'}</span></td></tr>`).join('');
-        } else { paymentsTable.innerHTML = `<tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد دفعات سابقة</td></tr>`; }
+            paymentsContainer.innerHTML = validPayments.map(p => {
+                const statusColor = p.status === 'تم التحويل' ? 'text-green-600' : 'text-yellow-600';
+                return `
+                <div class="data-card">
+                    <div class="card-row">
+                        <span class="card-label">رقم العملية:</span>
+                        <span class="card-value font-mono">${p.id || '-'}</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="card-label">التاريخ:</span>
+                        <span class="card-value">${formatDate(p.date)}</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="card-label">مبلغ الدفع:</span>
+                        <span class="card-value font-bold text-blue-600">${formatCurrency(p.amount)}</span>
+                    </div>
+                    <div class="card-row">
+                        <span class="card-label">الحالة:</span>
+                        <span class="card-value font-bold ${statusColor}">${p.status || 'قيد المعالجة'}</span>
+                    </div>
+                </div>`;
+            }).join('');
+        } else { 
+            paymentsContainer.innerHTML = `<div class="text-center text-gray-500 py-8 col-span-full"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد دفعات سابقة</div>`; 
+        }
+
+        // --- قسم طلب الدفع (يبقى كما هو) ---
         document.getElementById('requestPaymentMarketerName').textContent = marketer.name || '-';
         document.getElementById('requestPaymentMarketerCode').textContent = marketer.code || '-';
         document.getElementById('requestPaymentMarketerPhone').textContent = marketer.phone || '-';
@@ -298,6 +443,7 @@
         paymentAmountInput.max = remaining > 0 ? remaining.toFixed(2) : '0';
         paymentAmountInput.value = '';
     }
+    // END: تعديل دالة العرض الرئيسية
     
     // --- Session Handling ---
     function handleLogout() { state.currentMarketer = null; state.sessionToken = null; showPage('publicView'); }
@@ -309,6 +455,14 @@
     // --- Event Listeners Setup ---
     document.addEventListener('DOMContentLoaded', function() {
         loadPublicMarketers();
+        
+        // --- تحسين الـ Tabs لتكون متجاوبة ---
+        const tabsContainer = document.querySelector('nav[role="tablist"]');
+        if (tabsContainer) {
+            tabsContainer.classList.remove('flex-wrap', '-mx-4');
+            tabsContainer.classList.add('flex-nowrap', 'overflow-x-auto', 'space-x-2', 'sm:space-x-4');
+        }
+        
         document.getElementById('showLoginBtn').addEventListener('click', () => showPage('loginPage'));
         document.getElementById('showRegisterBtn').addEventListener('click', () => { showPage('registerPage'); document.getElementById('registrationDate').value = getCurrentDate(); });
         document.getElementById('adminLoginBtn').addEventListener('click', () => showPage('adminLoginPage'));
@@ -322,53 +476,37 @@
         document.getElementById('myPaymentsTab').addEventListener('click', () => showTab('myPayments'));
         document.getElementById('requestPaymentTab').addEventListener('click', () => showTab('requestPayment'));
         document.getElementById('copyWhatsappBtn').addEventListener('click', () => { const link = document.getElementById('whatsappLink'); link.select(); document.execCommand('copy'); showMessage('تم نسخ الرابط', 'success'); });
-        // ابحث عن هذا السطر في الكود الخاص بك
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    // واستبدل كل ما بداخله بهذا الكود الجديد
-    e.preventDefault();
-    const btn = e.target.querySelector('button[type="submit"]');
-    setButtonLoading(btn, true);
-    try {
-        // --- START: التعديل الجديد هنا ---
-
-        // 1. احصل على القيمة الخام من حقل الإدخال كما كتبها المستخدم
-        const rawPhoneValue = document.getElementById('phoneNumber').value;
-
-        // 2. تحقق مما إذا كانت السلسلة تحتوي على أي حرف مسافة (space, tab, etc.)
-        if (/\s/.test(rawPhoneValue)) {
-            // إذا تم العثور على مسافات، ألقِ خطأً بالرسالة المطلوبة
-            // سيتم التقاط هذا الخطأ بواسطة كتلة catch أدناه وعرضه للمستخدم
-            throw new Error('يجب أن يحتوي رقم الجوال على أرقام فقط وبدون مسافات.');
-        }
-
-        // 3. إذا لم يتم العثور على مسافات، قم بتنظيف الرقم (هذا يزيل المسافات المبدئية والنهائية فقط)
-        const phone = rawPhoneValue.trim();
         
-        // 4. تأكد من أن الحقل ليس فارغًا بعد التنظيف
-        if (!phone) {
-            throw new Error("يرجى إدخال رقم الجوال.");
-        }
-        
-        // --- END: نهاية التعديل ---
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            setButtonLoading(btn, true);
+            try {
+                const rawPhoneValue = document.getElementById('phoneNumber').value;
+                if (/\s/.test(rawPhoneValue)) {
+                    throw new Error('يجب أن يحتوي رقم الجوال على أرقام فقط وبدون مسافات.');
+                }
+                const phone = rawPhoneValue.trim();
+                if (!phone) {
+                    throw new Error("يرجى إدخال رقم الجوال.");
+                }
+                const data = await sendData("loginMarketer", { phone: phone });
+                if (data.marketer && data.token) {
+                    state.currentMarketer = data.marketer;
+                    state.sessionToken = data.token;
+                    showPage('marketerDashboard');
+                    await loadMarketerData();
+                    showMessage('تم تسجيل الدخول بنجاح', 'success');
+                } else {
+                    throw new Error('فشل تسجيل الدخول. لم يتم استلام بيانات الجلسة.');
+                }
+            } catch (err) {
+                showMessage(err.message, 'error');
+            } finally {
+                setButtonLoading(btn, false);
+            }
+        });
 
-        // بقية الكود تبقى كما هي، لكنها الآن تعمل مع الرقم النظيف والمُتحقق منه
-        const data = await sendData("loginMarketer", { phone: phone });
-        if (data.marketer && data.token) {
-            state.currentMarketer = data.marketer;
-            state.sessionToken = data.token;
-            showPage('marketerDashboard');
-            await loadMarketerData();
-            showMessage('تم تسجيل الدخول بنجاح', 'success');
-        } else {
-            throw new Error('فشل تسجيل الدخول. لم يتم استلام بيانات الجلسة.');
-        }
-    } catch (err) {
-        // كتلة catch هذه ستعرض الآن رسالة الخطأ المخصصة التي أضفناها
-        showMessage(err.message, 'error');
-    } finally {
-        setButtonLoading(btn, false);
-    }
-});
         document.getElementById('registerForm').addEventListener('submit', async (e) => { e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); setButtonLoading(btn, true); try { const formData = { name: document.getElementById('marketerName').value.trim(), phone: document.getElementById('marketerPhone').value.trim(), date: document.getElementById('registrationDate').value }; if (!formData.name || !formData.phone) throw new Error("يرجى ملء جميع الحقول."); await sendData("add_marketer", formData); showMessage('تم تسجيل المسوق بنجاح', 'success'); e.target.reset(); setTimeout(() => { showPage('publicView'); loadPublicMarketers(); }, 1500); } catch (err) { showMessage(err.message, 'error'); } finally { setButtonLoading(btn, false); } });
         document.getElementById('adminLoginForm').addEventListener('submit', async (e) => { e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); setButtonLoading(btn, true); try { const code = document.getElementById('adminCode').value; if (code === config.adminCode) { state.isAdmin = true; showPage('adminDashboard'); await loadAdminPayments(); showMessage('تم دخول الإدارة بنجاح', 'success'); } else { throw new Error('كود الإدارة غير صحيح'); } } catch(err) { showMessage(err.message, 'error'); } finally { setButtonLoading(btn, false); } });
         document.getElementById('paymentRequestForm').addEventListener('submit', async (e) => {
