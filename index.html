@@ -7,39 +7,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        .page-section {
-            display: none;
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .loading { display: none; }
+        .loading.active { display: inline-block; }
+        .message { display: none; }
+        .message.active { display: block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinner { animation: spin 1s linear infinite; }
+        /* لمنع الأسهم في حقل الأرقام */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
         }
-        .page-section.active {
-            display: block;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .loading {
-            display: none;
-        }
-        .loading.active {
-            display: inline-block;
-        }
-        .message {
-            display: none;
-        }
-        .message.active {
-            display: block;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        input[type=number] {
+          -moz-appearance: textfield;
         }
     </style>
 </head>
@@ -65,7 +51,6 @@
             <i class="fas fa-exclamation-triangle ml-2"></i>
             <span id="errorText"></span>
         </div>
-
         <div id="successMessage" class="message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
             <i class="fas fa-check-circle ml-2"></i>
             <span id="successText"></span>
@@ -74,41 +59,25 @@
         <!-- Public Marketers View -->
         <div id="publicView" class="page-section active">
             <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold">
-                        <i class="fas fa-users text-blue-600 ml-2"></i>
-                        جميع المسوقين
-                    </h2>
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                    <h2 class="text-2xl font-bold"><i class="fas fa-users text-blue-600 ml-2"></i>جميع المسوقين</h2>
                     <div class="flex gap-2">
-                        <button id="showLoginBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                            <i class="fas fa-sign-in-alt ml-2"></i>
-                            تسجيل الدخول
-                        </button>
-                        <button id="showRegisterBtn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
-                            <i class="fas fa-user-plus ml-2"></i>
-                            تسجيل مسوق جديد
-                        </button>
+                        <button id="showLoginBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"><i class="fas fa-sign-in-alt ml-2"></i>تسجيل الدخول</button>
+                        <button id="showRegisterBtn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"><i class="fas fa-user-plus ml-2"></i>تسجيل مسوق جديد</button>
                     </div>
                 </div>
-
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse border border-gray-300">
                         <thead>
                             <tr class="bg-gray-100">
                                 <th class="border border-gray-300 px-4 py-2 text-right">الكود</th>
-                                
                                 <th class="border border-gray-300 px-4 py-2 text-right">عدد العملاء</th>
                                 <th class="border border-gray-300 px-4 py-2 text-right">إجمالي الأرباح</th>
                                 <th class="border border-gray-300 px-4 py-2 text-right">تاريخ التسجيل</th>
                             </tr>
                         </thead>
                         <tbody id="publicMarketersTable">
-                            <tr>
-                                <td colspan="5" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
-                                    <i class="fas fa-spinner spinner text-4xl mb-2 block"></i>
-                                    جاري تحميل البيانات...
-                                </td>
-                            </tr>
+                            <tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-spinner spinner text-4xl mb-2 block"></i>جاري تحميل البيانات...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -118,881 +87,307 @@
         <!-- Login Page -->
         <div id="loginPage" class="page-section">
             <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
-                <h2 class="text-2xl font-bold text-center mb-6">
-                    <i class="fas fa-sign-in-alt text-blue-600 ml-2"></i>
-                    تسجيل الدخول
-                </h2>
+                <h2 class="text-2xl font-bold text-center mb-6"><i class="fas fa-sign-in-alt text-blue-600 ml-2"></i>تسجيل الدخول</h2>
                 <form id="loginForm">
-                    <div class="mb-4">
-                        <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-2">
-                            رقم الجوال
-                        </label>
-                        <input 
-                            type="tel" 
-                            id="phoneNumber" 
-                            name="phoneNumber" 
-                            required
-                            placeholder="أدخل رقم الجوال"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
-                        >
-                    </div>
-                    <button 
-                        type="submit" 
-                        class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
-                    >
-                        <i class="fas fa-spinner spinner loading ml-2"></i>
-                        دخول
-                    </button>
+                    <div class="mb-4"><label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-2">رقم الجوال</label><input type="tel" id="phoneNumber" name="phoneNumber" required placeholder="أدخل رقم الجوال" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"></div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"><i class="fas fa-spinner spinner loading ml-2"></i>دخول</button>
                 </form>
-                <div class="mt-4 text-center">
-                    <button 
-                        id="adminLoginBtn" 
-                        class="text-red-600 hover:text-red-800 text-sm"
-                    >
-                        دخول الإدارة
-                    </button>
-                </div>
-                <div class="mt-2 text-center">
-                    <button 
-                        id="backToPublicBtn" 
-                        class="text-blue-600 hover:text-blue-800 text-sm"
-                    >
-                        العودة للصفحة الرئيسية
-                    </button>
-                </div>
+                <div class="mt-4 text-center"><button id="adminLoginBtn" class="text-red-600 hover:text-red-800 text-sm">دخول الإدارة</button></div>
+                <div class="mt-2 text-center"><button id="backToPublicBtn" class="text-blue-600 hover:text-blue-800 text-sm">العودة للصفحة الرئيسية</button></div>
             </div>
         </div>
 
         <!-- Register Page -->
         <div id="registerPage" class="page-section">
             <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
-                <h2 class="text-2xl font-bold text-center mb-6">
-                    <i class="fas fa-user-plus text-green-600 ml-2"></i>
-                    تسجيل مسوق جديد
-                </h2>
+                <h2 class="text-2xl font-bold text-center mb-6"><i class="fas fa-user-plus text-green-600 ml-2"></i>تسجيل مسوق جديد</h2>
                 <form id="registerForm">
-                    <div class="mb-4">
-                        <label for="marketerName" class="block text-sm font-medium text-gray-700 mb-2">
-                            الاسم الكامل
-                        </label>
-                        <input 
-    type="text" 
-    id="marketerName" 
-    name="marketerName" 
-    required
-    placeholder="أدخل الاسم الكامل"
-    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-right"
-    pattern="^[\u0600-\u06FF\sA-Za-z]+$"
-    title="يجب أن يحتوي الاسم على أحرف فقط (عربية أو إنجليزية)"
->
-                    </div>
-                    <div class="mb-4">
-                        <label for="marketerPhone" class="block text-sm font-medium text-gray-700 mb-2">
-                            رقم الجوال
-                        </label>
-                        <input 
-    type="text" 
-    id="marketerPhone" 
-    name="marketerPhone" 
-    required
-    placeholder="أدخل رقم الجوال"
-    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-right"
-    pattern="^\d+$"
-    title="يجب أن يحتوي رقم الجوال على أرقام فقط وبدون مسافات"
-    inputmode="numeric"
->
-                    </div>
-                    <div class="mb-4">
-                        <label for="generatedCode" class="block text-sm font-medium text-gray-700 mb-2">
-                            كود المسوق (تلقائي)
-                        </label>
-                        <input 
-                            type="text" 
-                            id="generatedCode" 
-                            name="generatedCode" 
-                            readonly
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
-                        >
-                    </div>
-                    <div class="mb-6">
-                        <label for="registrationDate" class="block text-sm font-medium text-gray-700 mb-2">
-                            تاريخ التسجيل
-                        </label>
-                        <input 
-                            type="date" 
-                            id="registrationDate" 
-                            name="registrationDate" 
-                            readonly
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
-                        >
-                    </div>
-                    <button 
-                        type="submit" 
-                        class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200"
-                    >
-                        <i class="fas fa-spinner spinner loading ml-2"></i>
-                        تسجيل
-                    </button>
+                    <div class="mb-4"><label for="marketerName" class="block text-sm font-medium text-gray-700 mb-2">الاسم الكامل</label><input type="text" id="marketerName" name="marketerName" required placeholder="أدخل الاسم الكامل" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-right" pattern="^[\u0600-\u06FF\sA-Za-z]+$" title="يجب أن يحتوي الاسم على أحرف فقط (عربية أو إنجليزية)"></div>
+                    <div class="mb-4"><label for="marketerPhone" class="block text-sm font-medium text-gray-700 mb-2">رقم الجوال</label><input type="text" id="marketerPhone" name="marketerPhone" required placeholder="أدخل رقم الجوال" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-right" pattern="^\d+$" title="يجب أن يحتوي رقم الجوال على أرقام فقط وبدون مسافات" inputmode="numeric"></div>
+                    <div class="mb-6"><label for="registrationDate" class="block text-sm font-medium text-gray-700 mb-2">تاريخ التسجيل</label><input type="date" id="registrationDate" name="registrationDate" readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"></div>
+                    <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200"><i class="fas fa-spinner spinner loading ml-2"></i>تسجيل</button>
                 </form>
-                <div class="mt-4 text-center">
-                    <button 
-                        id="backToPublicFromRegisterBtn" 
-                        class="text-blue-600 hover:text-blue-800 text-sm"
-                    >
-                        العودة للصفحة الرئيسية
-                    </button>
-                </div>
+                <div class="mt-4 text-center"><button id="backToPublicFromRegisterBtn" class="text-blue-600 hover:text-blue-800 text-sm">العودة للصفحة الرئيسية</button></div>
             </div>
         </div>
 
         <!-- Admin Login Page -->
         <div id="adminLoginPage" class="page-section">
             <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
-                <h2 class="text-2xl font-bold text-center mb-6">
-                    <i class="fas fa-shield-alt text-red-600 ml-2"></i>
-                    دخول الإدارة
-                </h2>
+                <h2 class="text-2xl font-bold text-center mb-6"><i class="fas fa-shield-alt text-red-600 ml-2"></i>دخول الإدارة</h2>
                 <form id="adminLoginForm">
-                    <div class="mb-4">
-                        <label for="adminCode" class="block text-sm font-medium text-gray-700 mb-2">
-                            كود الإدارة
-                        </label>
-                        <input 
-                            type="password" 
-                            id="adminCode" 
-                            name="adminCode" 
-                            required
-                            placeholder="أدخل كود الإدارة"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-right"
-                        >
-                    </div>
-                    <button 
-                        type="submit" 
-                        class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-200"
-                    >
-                        <i class="fas fa-spinner spinner loading ml-2"></i>
-                        دخول الإدارة
-                    </button>
+                    <div class="mb-4"><label for="adminCode" class="block text-sm font-medium text-gray-700 mb-2">كود الإدارة</label><input type="password" id="adminCode" name="adminCode" required placeholder="أدخل كود الإدارة" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-right"></div>
+                    <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-200"><i class="fas fa-spinner spinner loading ml-2"></i>دخول الإدارة</button>
                 </form>
-                <div class="mt-4 text-center">
-                    <button 
-                        id="backToPublicFromAdminBtn" 
-                        class="text-blue-600 hover:text-blue-800 text-sm"
-                    >
-                        العودة للصفحة الرئيسية
-                    </button>
-                </div>
+                <div class="mt-4 text-center"><button id="backToPublicFromAdminBtn" class="text-blue-600 hover:text-blue-800 text-sm">العودة للصفحة الرئيسية</button></div>
             </div>
         </div>
 
         <!-- Marketer Dashboard -->
         <div id="marketerDashboard" class="page-section">
             <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold">
-                        <i class="fas fa-tachometer-alt text-blue-600 ml-2"></i>
-                        لوحة تحكم المسوق
-                    </h2>
-                    <button 
-                        id="logoutBtn" 
-                        class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200"
-                    >
-                        <i class="fas fa-sign-out-alt ml-2"></i>
-                        تسجيل الخروج
-                    </button>
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                    <h2 class="text-2xl font-bold"><i class="fas fa-tachometer-alt text-blue-600 ml-2"></i>لوحة تحكم المسوق</h2>
+                    <button id="logoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200"><i class="fas fa-sign-out-alt ml-2"></i>تسجيل الخروج</button>
                 </div>
-
-                <!-- Tabs -->
+                
                 <div class="border-b border-gray-200 mb-6">
-                    <nav class="-mb-px flex space-x-8" role="tablist">
-                        <button id="myDataTab" class="tab-button active py-2 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600 whitespace-nowrap">
-                            <i class="fas fa-user ml-2"></i>
-                            بياناتي
-                        </button>
-                        <button id="myClientsTab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                            <i class="fas fa-users ml-2"></i>
-                            عملائي
-                        </button>
-                        <button id="myPaymentsTab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                            <i class="fas fa-credit-card ml-2"></i>
-                            مدفوعاتي
-                        </button>
-                        <button id="requestPaymentTab" class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                            <i class="fas fa-money-bill-wave ml-2"></i>
-                            طلب دفع
-                        </button>
+                    <nav class="-mb-px flex flex-wrap -mx-4" role="tablist">
+                        <button id="myDataTab" class="tab-button active py-2 px-4 border-b-2 border-blue-500 font-medium text-sm text-blue-600 whitespace-nowrap"><i class="fas fa-user ml-2"></i>بياناتي</button>
+                        <button id="myClientsTab" class="tab-button py-2 px-4 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap"><i class="fas fa-users ml-2"></i>عملائي</button>
+                        <button id="myPaymentsTab" class="tab-button py-2 px-4 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap"><i class="fas fa-credit-card ml-2"></i>مدفوعاتي</button>
+                        <button id="requestPaymentTab" class="tab-button py-2 px-4 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 whitespace-nowrap"><i class="fas fa-money-bill-wave ml-2"></i>طلب دفع</button>
                     </nav>
                 </div>
-
-                <!-- Tab Contents -->
                 
-                <!-- My Data Tab -->
                 <div id="myDataContent" class="tab-content active">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="space-y-4">
-                            <div class="bg-blue-50 p-4 rounded-lg">
-                                <h3 class="font-semibold text-blue-800 mb-2">الاسم</h3>
-                                <p id="dashboardMarketerName" class="text-blue-600 text-lg">-</p>
-                            </div>
-                            <div class="bg-green-50 p-4 rounded-lg">
-                                <h3 class="font-semibold text-green-800 mb-2">الكود</h3>
-                                <p id="marketerCode" class="text-green-600 text-lg font-mono">-</p>
-                            </div>
-                            <div class="bg-purple-50 p-4 rounded-lg">
-                                <h3 class="font-semibold text-purple-800 mb-2">رقم الجوال</h3>
-                                <p id="dashboardMarketerPhone" class="text-purple-600 text-lg">-</p>
-                            </div>
-                            <div class="bg-orange-50 p-4 rounded-lg">
-                                <h3 class="font-semibold text-orange-800 mb-2">تاريخ التسجيل</h3>
-                                <p id="marketerDate" class="text-orange-600">-</p>
-                            </div>
-                        </div>
-                        <div class="space-y-4">
-                            <div class="bg-yellow-50 p-4 rounded-lg">
-                                <h3 class="font-semibold text-yellow-800 mb-2">المتبقي</h3>
-                                <p id="remainingAmount" class="text-yellow-600 text-2xl font-bold">$0.00</p>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h3 class="font-semibold text-gray-800 mb-2">رابط الواتساب</h3>
-                                <div class="flex items-center gap-2">
-                                  <textarea 
-  id="whatsappLink" 
-  readonly 
-  rows="5"
-  class="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm text-right resize-none"
-></textarea>
-  
-                                    <button id="copyWhatsappBtn" class="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="grid md:grid-cols-2 gap-6"><div class="space-y-4"><div class="bg-blue-50 p-4 rounded-lg"><h3 class="font-semibold text-blue-800 mb-2">الاسم</h3><p id="dashboardMarketerName" class="text-blue-600 text-lg">-</p></div><div class="bg-green-50 p-4 rounded-lg"><h3 class="font-semibold text-green-800 mb-2">الكود</h3><p id="marketerCode" class="text-green-600 text-lg font-mono">-</p></div><div class="bg-purple-50 p-4 rounded-lg"><h3 class="font-semibold text-purple-800 mb-2">رقم الجوال</h3><p id="dashboardMarketerPhone" class="text-purple-600 text-lg">-</p></div><div class="bg-orange-50 p-4 rounded-lg"><h3 class="font-semibold text-orange-800 mb-2">تاريخ التسجيل</h3><p id="marketerDate" class="text-orange-600">-</p></div></div><div class="space-y-4"><div class="bg-yellow-50 p-4 rounded-lg"><h3 class="font-semibold text-yellow-800 mb-2">المتبقي</h3><p id="remainingAmount" class="text-yellow-600 text-2xl font-bold">$0.00</p></div><div class="bg-gray-50 p-4 rounded-lg"><h3 class="font-semibold text-gray-800 mb-2">رابط الواتساب</h3><div class="flex items-center gap-2"><textarea id="whatsappLink" readonly rows="5" class="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm text-right resize-none"></textarea><button id="copyWhatsappBtn" class="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700"><i class="fas fa-copy"></i></button></div></div></div></div>
                 </div>
 
-                <!-- My Clients Tab -->
                 <div id="myClientsContent" class="tab-content">
-                    <div class="mb-4">
-                        <div class="bg-blue-50 p-4 rounded-lg flex justify-between items-center">
-                            <div>
-                                <h3 class="font-semibold text-blue-800">إجمالي الأرباح</h3>
-                                <p id="totalProfitClients" class="text-blue-600 text-2xl font-bold">$0.00</p>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-blue-800">عدد العملاء</h3>
-                                <p id="totalClientsCount" class="text-blue-600 text-2xl font-bold">0</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse border border-gray-300">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    
-                                    <th class="border border-gray-300 px-4 py-2 text-right">الاسم</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-right">السعر</th>
-                                </tr>
-                            </thead>
-                            <tbody id="myClientsTable">
-                                <tr>
-                                    <td colspan="3" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
-                                        <i class="fas fa-inbox text-4xl mb-2 block"></i>
-                                        لا توجد عملاء
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="mb-4"><div class="bg-blue-50 p-4 rounded-lg flex justify-between items-center"><div><h3 class="font-semibold text-blue-800">إجمالي الأرباح</h3><p id="totalProfitClients" class="text-blue-600 text-2xl font-bold">$0.00</p></div><div><h3 class="font-semibold text-blue-800">عدد العملاء</h3><p id="totalClientsCount" class="text-blue-600 text-2xl font-bold">0</p></div></div></div>
+                    <div class="overflow-x-auto"><table class="w-full border-collapse border border-gray-300"><thead><tr class="bg-gray-100"><th class="border border-gray-300 px-4 py-2 text-right">الاسم</th><th class="border border-gray-300 px-4 py-2 text-right">رقم العميل</th><th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th><th class="border border-gray-300 px-4 py-2 text-right">الربح</th></tr></thead><tbody id="myClientsTable"><tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا يوجد عملاء بعد</td></tr></tbody></table></div>
                 </div>
 
-                <!-- My Payments Tab -->
                 <div id="myPaymentsContent" class="tab-content">
-                    <div class="mb-4">
-                        <div class="bg-green-50 p-4 rounded-lg flex justify-between items-center">
-                            <div>
-                                <h3 class="font-semibold text-green-800">مجموع الدفعات</h3>
-                                <p id="totalPaymentsAmount" class="text-green-600 text-2xl font-bold">$0.00</p>
-                            </div>
-                            <div>
-                                <h3 class="font-semibold text-green-800">كود المسوق</h3>
-                                <p id="paymentMarketerCode" class="text-green-600 text-lg font-mono">-</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse border border-gray-300">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="border border-gray-300 px-4 py-2 text-right">رقم العملية</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-right">مبلغ الدفع</th>
-                                    <th class="border border-gray-300 px-4 py-2 text-right">الحالة</th>
-                                </tr>
-                            </thead>
-                            <tbody id="myPaymentsTable">
-                                <tr>
-                                    <td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
-                                        <i class="fas fa-inbox text-4xl mb-2 block"></i>
-                                        لا توجد دفعات
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="mb-4"><div class="bg-green-50 p-4 rounded-lg flex justify-between items-center"><div><h3 class="font-semibold text-green-800">مجموع الدفعات</h3><p id="totalPaymentsAmount" class="text-green-600 text-2xl font-bold">$0.00</p></div><div><h3 class="font-semibold text-green-800">كود المسوق</h3><p id="paymentMarketerCode" class="text-green-600 text-lg font-mono">-</p></div></div></div>
+                    <div class="overflow-x-auto"><table class="w-full border-collapse border border-gray-300"><thead><tr class="bg-gray-100"><th class="border border-gray-300 px-4 py-2 text-right">رقم العملية</th><th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th><th class="border border-gray-300 px-4 py-2 text-right">مبلغ الدفع</th><th class="border border-gray-300 px-4 py-2 text-right">الحالة</th></tr></thead><tbody id="myPaymentsTable"><tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد دفعات سابقة</td></tr></tbody></table></div>
                 </div>
-
-                <!-- Request Payment Tab -->
+                
                 <div id="requestPaymentContent" class="tab-content">
-                    <div class="max-w-md mx-auto">
+                    <div class="max-w-md mx-auto bg-gray-50 p-6 rounded-lg border">
+                        <h3 class="text-lg font-bold text-center mb-4 text-gray-700">بيانات طلب الدفع</h3>
+                        <div class="mb-6 space-y-3">
+                            <div class="flex justify-between items-center"><span class="font-semibold text-gray-600">الاسم:</span><span id="requestPaymentMarketerName" class="text-gray-800 font-bold">-</span></div>
+                            <div class="flex justify-between items-center"><span class="font-semibold text-gray-600">الكود:</span><span id="requestPaymentMarketerCode" class="text-gray-800 font-mono">-</span></div>
+                            <div class="flex justify-between items-center"><span class="font-semibold text-gray-600">رقم الجوال:</span><span id="requestPaymentMarketerPhone" class="text-gray-800 font-mono">-</span></div>
+                            <div class="flex justify-between items-center"><span class="font-semibold text-gray-600">تاريخ اليوم:</span><span id="requestPaymentDate" class="text-gray-800">-</span></div>
+                            <div class="flex justify-between items-center pt-3 mt-3 border-t"><span class="font-semibold text-yellow-600">الرصيد المتاح:</span><span id="availableAmount" class="text-yellow-700 font-bold text-lg">$0.00</span></div>
+                        </div>
                         <form id="paymentRequestForm">
-                            <div class="mb-4">
-                                <label for="paymentName" class="block text-sm font-medium text-gray-700 mb-2">
-                                    الاسم
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="paymentName" 
-                                    name="paymentName" 
-                                    readonly
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
-                                >
-                            </div>
-                            <div class="mb-4">
-                                <label for="paymentCode" class="block text-sm font-medium text-gray-700 mb-2">
-                                    الكود
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="paymentCode" 
-                                    name="paymentCode" 
-                                    readonly
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
-                                >
-                            </div>
-                            <div class="mb-4">
-                                <label for="paymentPhone" class="block text-sm font-medium text-gray-700 mb-2">
-                                    رقم الجوال
-                                </label>
-                                <input 
-                                    type="tel" 
-                                    id="paymentPhone" 
-                                    name="paymentPhone" 
-                                    readonly
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
-                                >
-                            </div>
-                            <div class="mb-4">
-                                <label for="paymentDate" class="block text-sm font-medium text-gray-700 mb-2">
-                                    التاريخ
-                                </label>
-                                <input 
-                                    type="date" 
-                                    id="paymentDate" 
-                                    name="paymentDate" 
-                                    readonly
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-right"
-                                >
-                            </div>
-                            <div class="mb-4">
-                                <label for="paymentAmount" class="block text-sm font-medium text-gray-700 mb-2">
-                                    مبلغ الدفع
-                                </label>
-                                <input 
-                                    type="number" 
-                                    id="paymentAmount" 
-                                    name="paymentAmount" 
-                                    min="10"
-                                    step="5"
-                                    required
-                                    placeholder="أدخل المبلغ المطلوب"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"
-                                >
-                                <p class="text-sm text-gray-600 mt-1">المتبقي: <span id="availableAmount">$0.00</span></p>
-                            </div>
-                            <button 
-                                type="submit" 
-                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
-                            >
-                                <i class="fas fa-spinner spinner loading ml-2"></i>
-                                حفظ الطلب
-                            </button>
+                            <div class="mb-4"><label for="paymentAmount" class="block text-sm font-medium text-gray-700 mb-2">مبلغ الدفع المطلوب</label><input type="number" id="paymentAmount" name="paymentAmount" min="10" step="any" required placeholder="أدخل المبلغ المطلوب" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-right"></div>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"><i class="fas fa-spinner spinner loading ml-2"></i>إرسال طلب الدفع</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
+        
         <!-- Admin Dashboard -->
         <div id="adminDashboard" class="page-section">
             <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold">
-                        <i class="fas fa-cogs text-red-600 ml-2"></i>
-                        إدارة الطلبات
-                    </h2>
-                    <button 
-                        id="adminLogoutBtn" 
-                        class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200"
-                    >
-                        <i class="fas fa-sign-out-alt ml-2"></i>
-                        تسجيل الخروج
-                    </button>
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                    <h2 class="text-2xl font-bold"><i class="fas fa-cogs text-red-600 ml-2"></i>إدارة الطلبات</h2>
+                    <button id="adminLogoutBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition duration-200"><i class="fas fa-sign-out-alt ml-2"></i>تسجيل الخروج</button>
                 </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse border border-gray-300">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="border border-gray-300 px-4 py-2 text-right">رقم العملية</th>
-                                <th class="border border-gray-300 px-4 py-2 text-right">الاسم</th>
-                                <th class="border border-gray-300 px-4 py-2 text-right">الكود</th>
-                                <th class="border border-gray-300 px-4 py-2 text-right">رقم الجوال</th>
-                                <th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th>
-                                <th class="border border-gray-300 px-4 py-2 text-right">مبلغ الدفع</th>
-                                <th class="border border-gray-300 px-4 py-2 text-right">الحالة</th>
-                                <th class="border border-gray-300 px-4 py-2 text-right">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminPaymentsTable">
-                            <tr>
-                                <td colspan="8" class="border border-gray-300 px-4 py-8 text-center text-gray-500">
-                                    <i class="fas fa-inbox text-4xl mb-2 block"></i>
-                                    لا توجد طلبات دفع
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <div class="overflow-x-auto"><table class="w-full border-collapse border border-gray-300"><thead><tr class="bg-gray-100"><th class="border border-gray-300 px-4 py-2 text-right">رقم العملية</th><th class="border border-gray-300 px-4 py-2 text-right">الاسم</th><th class="border border-gray-300 px-4 py-2 text-right">الكود</th><th class="border border-gray-300 px-4 py-2 text-right">رقم الجوال</th><th class="border border-gray-300 px-4 py-2 text-right">التاريخ</th><th class="border border-gray-300 px-4 py-2 text-right">مبلغ الدفع</th><th class="border border-gray-300 px-4 py-2 text-right">الحالة</th><th class="border border-gray-300 px-4 py-2 text-right">إجراءات</th></tr></thead><tbody id="adminPaymentsTable"><tr><td colspan="8" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد طلبات دفع</td></tr></tbody></table></div>
             </div>
         </div>
     </div>
 
     <script>
-    // Application State
-    const state = {
-        currentPage: 'publicView',
-        currentMarketer: null,
-        allMarketers: [],
-        isAdmin: false,
-        currentTab: 'myData'
-    };
+    // --- Application State ---
+    const state = { currentPage: 'publicView', currentMarketer: null, sessionToken: null, allMarketers: [], isAdmin: false, currentTab: 'myData' };
 
-    // Configuration
-    const config = {
-        googleScriptUrl: 'https://script.google.com/macros/s/AKfycbwwXgOfA2R_BCMYWOQbPkGxkJugFXL1LZg4l3xby_sBuAzQbxdFOWyaysKm_BsytFin/exec', // <-- تأكد من أن هذا هو الرابط الصحيح
-        adminCode: '###alaqrab000man@@@',
-        whatsappNumber: '967714045679'
+    // --- Configuration ---
+    const config = { 
+        googleScriptUrl: 'https://script.google.com/macros/s/AKfycbwwXgOfA2R_BCMYWOQbPkGxkJugFXL1LZg4l3xby_sBuAzQbxdFOWyaysKm_BsytFin/exec', 
+        adminCode: '###alaqrab000man@@@', 
+        whatsappNumber: '967714045679' 
     };
 
     // --- Utility Functions ---
+    function showPage(pageId) { document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active')); document.getElementById(pageId).classList.add('active'); state.currentPage = pageId; }
+    function showTab(tabId) { document.querySelectorAll('.tab-button').forEach(b => { b.classList.remove('active', 'border-blue-500', 'text-blue-600'); b.classList.add('border-transparent', 'text-gray-500'); }); document.getElementById(tabId + 'Tab').classList.add('active', 'border-blue-500', 'text-blue-600'); document.getElementById(tabId + 'Tab').classList.remove('border-transparent', 'text-gray-500'); document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); document.getElementById(tabId + 'Content').classList.add('active'); state.currentTab = tabId; }
+    function showLoading(show = true) { document.getElementById('globalLoading').classList.toggle('active', show); }
+    function showMessage(message, type = 'error') { const el = document.getElementById(type + 'Message'); const text = document.getElementById(type + 'Text'); text.textContent = message; el.classList.add('active'); setTimeout(() => el.classList.remove('active'), 5000); }
+    function setButtonLoading(button, isLoading) { const spinner = button.querySelector('.spinner'); button.disabled = isLoading; if (spinner) spinner.classList.toggle('active', isLoading); }
+    function formatCurrency(amount) { return new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' }).format(amount || 0); }
+    function formatDate(dateString) { if (!dateString) return '-'; try { return new Date(dateString).toLocaleDateString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit' }); } catch (e) { return dateString; } }
+    function getCurrentDate() { return new Date().toISOString().split('T')[0]; }
+    function normalizePhoneNumber(phoneString) { if (!phoneString) { return ""; } return String(phoneString).replace(/\D/g, ''); }
 
-    function showPage(pageId) {
-        document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        state.currentPage = pageId;
-    }
-
-    function showTab(tabId) {
-        document.querySelectorAll('.tab-button').forEach(button => {
-            button.classList.remove('active', 'border-blue-500', 'text-blue-600');
-            button.classList.add('border-transparent', 'text-gray-500');
-        });
-        document.getElementById(tabId + 'Tab').classList.add('active', 'border-blue-500', 'text-blue-600');
-        document.getElementById(tabId + 'Tab').classList.remove('border-transparent', 'text-gray-500');
-
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        document.getElementById(tabId + 'Content').classList.add('active');
-        state.currentTab = tabId;
-    }
-
-    function showLoading(show = true) {
-        document.getElementById('globalLoading').classList.toggle('active', show);
-    }
-
-    function showMessage(message, type = 'error') {
-        const messageDiv = document.getElementById(type + 'Message');
-        const messageText = document.getElementById(type + 'Text');
-        messageText.textContent = message;
-        messageDiv.classList.add('active');
-        setTimeout(() => messageDiv.classList.remove('active'), 5000);
-    }
-
-    function setButtonLoading(button, isLoading) {
-        const spinner = button.querySelector('.spinner');
-        button.disabled = isLoading;
-        if (spinner) spinner.classList.toggle('active', isLoading);
-    }
-
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' }).format(amount || 0);
-    }
-
-    function formatDate(dateString) {
-        if (!dateString) return '-';
-        try {
-            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            return new Date(dateString).toLocaleDateString('ar-EG', options);
-        } catch (e) {
-            return dateString;
-        }
-    }
-
-    function getCurrentDate() {
-        return new Date().toISOString().split('T')[0];
-    }
-
-    // --- API & Data Functions (Promise-based) ---
-
-    function fetchSheet(sheet, filters = {}) {
-        showLoading(true);
-        return new Promise((resolve, reject) => {
-            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-            window[callbackName] = (response) => {
-                delete window[callbackName];
-                document.body.removeChild(script);
-                showLoading(false);
-                resolve(response);
-            };
-
-            const params = new URLSearchParams({ sheet, callback: callbackName, ...filters });
-            const script = document.createElement("script");
-            script.src = `${config.googleScriptUrl}?${params.toString()}`;
-
-            script.onerror = () => {
-                delete window[callbackName];
-                if(document.body.contains(script)) document.body.removeChild(script);
-                showLoading(false);
-                reject(new Error('فشل الاتصال بالخادم لجلب البيانات.'));
-            };
-            document.body.appendChild(script);
-        });
-    }
-
+    // --- API & Data Functions ---
+    function fetchSheet(sheet, filters = {}) { showLoading(true); return new Promise((resolve, reject) => { const c = 'jsonp_callback_' + Math.round(100000 * Math.random()); const s = document.createElement('script'); window[c] = (r) => { delete window[c]; if(document.body.contains(s)) document.body.removeChild(s); showLoading(false); resolve(r); }; const p = new URLSearchParams({ sheet, callback: c, ...filters }); s.src = `${config.googleScriptUrl}?${p.toString()}`; s.onerror = () => { delete window[c]; if (document.body.contains(s)) document.body.removeChild(s); showLoading(false); reject(new Error('فشل الاتصال بالخادم.')); }; document.body.appendChild(s); }); }
     function sendData(action, data) {
         showLoading(true);
         return new Promise((resolve, reject) => {
-            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-            window[callbackName] = (response) => {
-                delete window[callbackName];
-                document.body.removeChild(script);
+            const c = 'jsonp_callback_' + Math.round(100000 * Math.random());
+            const s = document.createElement('script');
+            window[c] = (r) => {
+                delete window[c];
+                if(document.body.contains(s)) document.body.removeChild(s);
                 showLoading(false);
-                if (response && response.success) {
-                    resolve(response);
+                if (r && r.success) {
+                    resolve(r);
                 } else {
-                    reject(new Error(response.message || 'فشل في تنفيذ العملية.'));
+                    if (r && r.error === 'invalid_session') {
+                        showMessage('انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى.', 'error');
+                        handleLogout();
+                    }
+                    reject(new Error(r.message || 'فشل في تنفيذ العملية.'));
                 }
             };
-
-            const params = new URLSearchParams({ action, callback: callbackName, ...data });
-            const script = document.createElement('script');
-            script.src = `${config.googleScriptUrl}?${params.toString()}`;
-
-            script.onerror = () => {
-                delete window[callbackName];
-                if(document.body.contains(script)) document.body.removeChild(script);
-                showLoading(false);
-                reject(new Error('فشل الاتصال بالخادم لإرسال البيانات.'));
-            };
-            document.body.appendChild(script);
+            const actionsRequiringSession = ['add_payment_request', 'logoutMarketer'];
+            if (actionsRequiringSession.includes(action) && state.currentMarketer && state.sessionToken) {
+                data.code = state.currentMarketer.code;
+                data.token = state.sessionToken;
+            }
+            const p = new URLSearchParams({ action, callback: c, ...data });
+            s.src = `${config.googleScriptUrl}?${p.toString()}`;
+            s.onerror = () => { delete window[c]; if (document.body.contains(s)) document.body.removeChild(s); showLoading(false); reject(new Error('فشل الاتصال بالخادم.')); };
+            document.body.appendChild(s);
         });
     }
 
     // --- Data Loading & Display Functions ---
-
-    async function loadPublicMarketers() {
-        try {
-            const data = await fetchSheet("المسوقين");
-            state.allMarketers = data || [];
-        } catch (error) {
-            showMessage(error.message, 'error');
-            state.allMarketers = [];
-        }
-        displayPublicMarketers();
-    }
-
+    async function loadPublicMarketers() { try { const data = await fetchSheet("المسوقين"); state.allMarketers = data || []; } catch (error) { showMessage(error.message, 'error'); state.allMarketers = []; } displayPublicMarketers(); }
     function displayPublicMarketers() {
         const tableBody = document.getElementById('publicMarketersTable');
-        if (!state.allMarketers || state.allMarketers.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد بيانات</td></tr>`;
-            return;
-        }
+        if (!state.allMarketers || state.allMarketers.length === 0) { tableBody.innerHTML = `<tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد بيانات</td></tr>`; return; }
         tableBody.innerHTML = state.allMarketers.map(marketer => {
             const clientCount = marketer.clients ? marketer.clients.length : 0;
-            const totalProfit = marketer.clients ? marketer.clients.reduce((sum, client) => sum + (parseFloat(client.price) || 0), 0) : 0;
-            return `
-                <tr>
-                    <td class="border border-gray-300 px-4 py-2 font-mono">${marketer.code || '-'}</td>
-                    <td class="border border-gray-300 px-4 py-2 text-center font-bold text-blue-600">${clientCount}</td>
-                    <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(totalProfit)}</td>
-                    <td class="border border-gray-300 px-4 py-2">${formatDate(marketer.date)}</td>
-                </tr>
-            `;
+            const totalProfit = marketer.clients ? marketer.clients.filter(client => client && client.id && normalizePhoneNumber(client.id).startsWith('966')).length * 10 : 0;
+            return `<tr><td class="border border-gray-300 px-4 py-2 font-mono">${marketer.code || '-'}</td><td class="border border-gray-300 px-4 py-2 text-center font-bold text-blue-600">${clientCount}</td><td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(totalProfit)}</td><td class="border border-gray-300 px-4 py-2">${formatDate(marketer.date)}</td></tr>`;
         }).join('');
     }
-
     async function loadMarketerData() {
-        if (!state.currentMarketer) return;
+        if (!state.currentMarketer || !state.sessionToken) { showMessage('جلسة غير صالحة. يرجى تسجيل الدخول.', 'error'); handleLogout(); return; }
         try {
-            const data = await fetchSheet("بيانات_المسوق", { code: state.currentMarketer.code });
-            if (data && data.length > 0) {
-                state.currentMarketer = data[0]; // Replace with full fresh data
-                displayMarketerData();
-            } else {
-                throw new Error('فشل في تحديث بيانات المسوق.');
-            }
-        } catch (error) {
-            showMessage(error.message, 'error');
-            // Optional: Logout if data load fails
-            // state.currentMarketer = null;
-            // showPage('publicView');
-        }
+            const data = await fetchSheet("بيانات_المسوق", { code: state.currentMarketer.code, token: state.sessionToken });
+            if (data && data.length > 0) { state.currentMarketer = data[0]; displayMarketerData(); } 
+            else { throw new Error('فشل في تحديث بيانات المسوق. قد تكون الجلسة منتهية.'); }
+        } catch (error) { showMessage(error.message, 'error'); handleLogout(); }
     }
-
     function displayMarketerData() {
         const marketer = state.currentMarketer;
         if (!marketer) return;
-
-        // My Data Tab
+        const validClients = (marketer.clients && Array.isArray(marketer.clients)) ? marketer.clients : [];
+        const validPayments = (marketer.payments && Array.isArray(marketer.payments)) ? marketer.payments : [];
+        const totalProfit = validClients.filter(client => client && client.id && normalizePhoneNumber(client.id).startsWith('966')).length * 10;
+        const totalPayments = validPayments.reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0);
+        const remaining = totalProfit - totalPayments;
         document.getElementById('dashboardMarketerName').textContent = marketer.name || '-';
         document.getElementById('marketerCode').textContent = marketer.code || '-';
         document.getElementById('dashboardMarketerPhone').textContent = marketer.phone || '-';
         document.getElementById('marketerDate').textContent = formatDate(marketer.date);
-
-        const totalProfit = marketer.clients ? marketer.clients.reduce((sum, client) => sum + (parseFloat(client.price) || 0), 0) : 0;
-        const totalPayments = marketer.payments ? marketer.payments.reduce((sum, payment) => sum + (parseFloat(payment.amount) || 0), 0) : 0;
-        const remaining = totalProfit - totalPayments;
-
         document.getElementById('remainingAmount').textContent = formatCurrency(remaining);
-        document.getElementById('whatsappLink').value = 
-  `السلام عليك\nتعال أساعدك والدفع بعد الحل  وفيه خصم لأول مره عشان تتأكد من الشغل بنفسك\n\nوهذا رقم الواتساب مع كود الخصم:\nhttps://wa.me/${config.whatsappNumber}?text=كودالخصم${marketer.code}`;
-
-        
-        // My Clients Tab
+        document.getElementById('whatsappLink').value = `السلام عليك\nتعال أساعدك والدفع بعد الحل  وفيه خصم لأول مره عشان تتأكد من الشغل بنفسك\n\nوهذا رقم الواتساب مع كود الخصم:\nhttps://wa.me/${config.whatsappNumber}?text=كودالخصم${marketer.code}`;
         document.getElementById('totalProfitClients').textContent = formatCurrency(totalProfit);
-        document.getElementById('totalClientsCount').textContent = marketer.clients ? marketer.clients.length : 0;
+        document.getElementById('totalClientsCount').textContent = validClients.length;
         const clientsTable = document.getElementById('myClientsTable');
-        if (marketer.clients && marketer.clients.length > 0) {
-            clientsTable.innerHTML = marketer.clients.map(client => `
-                <tr>
-                    <td class="border border-gray-300 px-4 py-2">${client.name || '-'}</td>
-                    <td class="border border-gray-300 px-4 py-2">${formatDate(client.date)}</td>
-                    <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(client.price)}</td>
-                </tr>`).join('');
-        } else {
-            clientsTable.innerHTML = `<tr><td colspan="3" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد عملاء</td></tr>`;
-        }
-        
-        // My Payments Tab
+        if (validClients.length > 0) {
+            clientsTable.innerHTML = validClients.map(client => {
+                if (!client) return '';
+                const isSaudi = normalizePhoneNumber(client.id || '').startsWith('966');
+                return `<tr><td class="border border-gray-300 px-4 py-2">${client.name || '-'}</td><td class="border border-gray-300 px-4 py-2 font-mono">${isSaudi ? '********' : (client.id || '-')}</td><td class="border border-gray-300 px-4 py-2">${formatDate(client.date)}</td><td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(isSaudi ? 10 : 0)}</td></tr>`;
+            }).join('');
+        } else { clientsTable.innerHTML = `<tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا يوجد عملاء بعد</td></tr>`; }
         document.getElementById('totalPaymentsAmount').textContent = formatCurrency(totalPayments);
         document.getElementById('paymentMarketerCode').textContent = marketer.code || '-';
         const paymentsTable = document.getElementById('myPaymentsTable');
-        if (marketer.payments && marketer.payments.length > 0) {
-            paymentsTable.innerHTML = marketer.payments.map(payment => `
-                <tr>
-                    <td class="border border-gray-300 px-4 py-2">${payment.id || '-'}</td>
-                    <td class="border border-gray-300 px-4 py-2">${formatDate(payment.date)}</td>
-                    <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(payment.amount)}</td>
-                    <td class="border border-gray-300 px-4 py-2"><span class="px-2 py-1 text-xs rounded-full ${payment.status === 'تم التحويل' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${payment.status || 'قيد المعالجة'}</span></td>
-                </tr>`).join('');
-        } else {
-            paymentsTable.innerHTML = `<tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد دفعات</td></tr>`;
-        }
-
-        // Request Payment Tab
-        document.getElementById('paymentName').value = marketer.name || '';
-        document.getElementById('paymentCode').value = marketer.code || '';
-        document.getElementById('paymentPhone').value = marketer.phone || '';
-        document.getElementById('paymentDate').value = getCurrentDate();
+        if (validPayments.length > 0) {
+            paymentsTable.innerHTML = validPayments.map(p => `<tr><td class="border border-gray-300 px-4 py-2">${p.id || '-'}</td><td class="border border-gray-300 px-4 py-2">${formatDate(p.date)}</td><td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(p.amount)}</td><td class="border border-gray-300 px-4 py-2"><span class="px-2 py-1 text-xs rounded-full ${p.status === 'تم التحويل' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${p.status || 'قيد المعالجة'}</span></td></tr>`).join('');
+        } else { paymentsTable.innerHTML = `<tr><td colspan="4" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد دفعات سابقة</td></tr>`; }
+        document.getElementById('requestPaymentMarketerName').textContent = marketer.name || '-';
+        document.getElementById('requestPaymentMarketerCode').textContent = marketer.code || '-';
+        document.getElementById('requestPaymentMarketerPhone').textContent = marketer.phone || '-';
+        document.getElementById('requestPaymentDate').textContent = new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit' });
         document.getElementById('availableAmount').textContent = formatCurrency(remaining);
-        document.getElementById('paymentAmount').max = remaining > 0 ? remaining.toFixed(2) : '0';
-    }
-
-    async function loadAdminPayments() {
-        try {
-            const payments = await fetchSheet("الدفع");
-            displayAdminPayments(payments || []);
-        } catch (error) {
-            showMessage(error.message, 'error');
-            displayAdminPayments([]);
-        }
+        const paymentAmountInput = document.getElementById('paymentAmount');
+        paymentAmountInput.max = remaining > 0 ? remaining.toFixed(2) : '0';
+        paymentAmountInput.value = '';
     }
     
-    function displayAdminPayments(payments) {
-        const tableBody = document.getElementById('adminPaymentsTable');
-        if (payments.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="8" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد طلبات دفع</td></tr>`;
-            return;
-        }
-
-        tableBody.innerHTML = payments.map(payment => `
-            <tr>
-                <td class="border border-gray-300 px-4 py-2">${payment.id || '-'}</td>
-                <td class="border border-gray-300 px-4 py-2">${payment.name || '-'}</td>
-                <td class="border border-gray-300 px-4 py-2 font-mono">${payment.code || '-'}</td>
-                <td class="border border-gray-300 px-4 py-2">${payment.phone || '-'}</td>
-                <td class="border border-gray-300 px-4 py-2">${formatDate(payment.date)}</td>
-                <td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(payment.amount)}</td>
-                <td class="border border-gray-300 px-4 py-2"><span class="px-2 py-1 text-xs rounded-full ${payment.status === 'تم التحويل' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${payment.status || 'قيد المعالجة'}</span></td>
-                <td class="border border-gray-300 px-4 py-2">
-                    <select class="payment-status-select px-2 py-1 border border-gray-300 rounded text-sm" data-payment-id="${payment.id}">
-                        <option value="قيد المعالجة" ${payment.status === 'قيد المعالجة' ? 'selected' : ''}>قيد المعالجة</option>
-                        <option value="تم التحويل" ${payment.status === 'تم التحويل' ? 'selected' : ''}>تم التحويل</option>
-                    </select>
-                </td>
-            </tr>
-        `).join('');
-
-        document.querySelectorAll('.payment-status-select').forEach(select => {
-            select.addEventListener('change', async (e) => {
-                const paymentId = e.target.dataset.paymentId;
-                const newStatus = e.target.value;
-                try {
-                    await sendData("update_status", { operationId: paymentId, newStatus: newStatus });
-                    showMessage('تم تحديث حالة الدفع بنجاح', 'success');
-                } catch(error) {
-                    showMessage(error.message, 'error');
-                    loadAdminPayments();
-                }
-            });
-        });
-    }
+    // --- Session Handling ---
+    function handleLogout() { state.currentMarketer = null; state.sessionToken = null; showPage('publicView'); }
+    
+    // --- Admin functions ---
+    async function loadAdminPayments() { try { const p = await fetchSheet("الدفع"); displayAdminPayments(p || []); } catch (e) { showMessage(e.message, 'error'); displayAdminPayments([]); } }
+    function displayAdminPayments(payments) { const tableBody = document.getElementById('adminPaymentsTable'); if (payments.length === 0) { tableBody.innerHTML = `<tr><td colspan="8" class="border border-gray-300 px-4 py-8 text-center text-gray-500"><i class="fas fa-inbox text-4xl mb-2 block"></i>لا توجد طلبات دفع</td></tr>`; return; } tableBody.innerHTML = payments.map(p => `<tr><td class="border border-gray-300 px-4 py-2">${p.id||'-'}</td><td class="border border-gray-300 px-4 py-2">${p.name||'-'}</td><td class="border border-gray-300 px-4 py-2 font-mono">${p.code||'-'}</td><td class="border border-gray-300 px-4 py-2">${p.phone||'-'}</td><td class="border border-gray-300 px-4 py-2">${formatDate(p.date)}</td><td class="border border-gray-300 px-4 py-2 font-bold text-green-600">${formatCurrency(p.amount)}</td><td class="border border-gray-300 px-4 py-2"><span class="px-2 py-1 text-xs rounded-full ${p.status==='تم التحويل'?'bg-green-100 text-green-800':'bg-yellow-100 text-yellow-800'}">${p.status||'قيد المعالجة'}</span></td><td class="border border-gray-300 px-4 py-2"><select class="payment-status-select px-2 py-1 border border-gray-300 rounded text-sm" data-payment-id="${p.id}"><option value="قيد المعالجة" ${p.status==='قيد المعالجة'?'selected':''}>قيد المعالجة</option><option value="تم التحويل" ${p.status==='تم التحويل'?'selected':''}>تم التحويل</option></select></td></tr>`).join(''); document.querySelectorAll('.payment-status-select').forEach(s => { s.addEventListener('change', async (e) => { try { await sendData("update_status", { operationId: e.target.dataset.paymentId, newStatus: e.target.value }); showMessage('تم تحديث حالة الدفع بنجاح', 'success'); } catch(err) { showMessage(err.message, 'error'); loadAdminPayments(); } }); }); }
 
     // --- Event Listeners Setup ---
-
     document.addEventListener('DOMContentLoaded', function() {
         loadPublicMarketers();
-
-        // Navigation
         document.getElementById('showLoginBtn').addEventListener('click', () => showPage('loginPage'));
-        document.getElementById('showRegisterBtn').addEventListener('click', () => {
-            showPage('registerPage');
-            document.getElementById('registrationDate').value = getCurrentDate();
-        });
+        document.getElementById('showRegisterBtn').addEventListener('click', () => { showPage('registerPage'); document.getElementById('registrationDate').value = getCurrentDate(); });
         document.getElementById('adminLoginBtn').addEventListener('click', () => showPage('adminLoginPage'));
         document.getElementById('backToPublicBtn').addEventListener('click', () => showPage('publicView'));
         document.getElementById('backToPublicFromRegisterBtn').addEventListener('click', () => showPage('publicView'));
         document.getElementById('backToPublicFromAdminBtn').addEventListener('click', () => showPage('publicView'));
-        document.getElementById('logoutBtn').addEventListener('click', () => { state.currentMarketer = null; showPage('publicView'); });
+        document.getElementById('logoutBtn').addEventListener('click', async () => { if (state.currentMarketer && state.sessionToken) { try { await sendData("logoutMarketer", {}); } catch (err) { console.error("Logout failed on server:", err.message); } } handleLogout(); });
         document.getElementById('adminLogoutBtn').addEventListener('click', () => { state.isAdmin = false; showPage('publicView'); });
-        
-        // Tabs
         document.getElementById('myDataTab').addEventListener('click', () => showTab('myData'));
         document.getElementById('myClientsTab').addEventListener('click', () => showTab('myClients'));
         document.getElementById('myPaymentsTab').addEventListener('click', () => showTab('myPayments'));
         document.getElementById('requestPaymentTab').addEventListener('click', () => showTab('requestPayment'));
+        document.getElementById('copyWhatsappBtn').addEventListener('click', () => { const link = document.getElementById('whatsappLink'); link.select(); document.execCommand('copy'); showMessage('تم نسخ الرابط', 'success'); });
+        // ابحث عن هذا السطر في الكود الخاص بك
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    // واستبدل كل ما بداخله بهذا الكود الجديد
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    setButtonLoading(btn, true);
+    try {
+        // --- START: التعديل الجديد هنا ---
+
+        // 1. احصل على القيمة الخام من حقل الإدخال كما كتبها المستخدم
+        const rawPhoneValue = document.getElementById('phoneNumber').value;
+
+        // 2. تحقق مما إذا كانت السلسلة تحتوي على أي حرف مسافة (space, tab, etc.)
+        if (/\s/.test(rawPhoneValue)) {
+            // إذا تم العثور على مسافات، ألقِ خطأً بالرسالة المطلوبة
+            // سيتم التقاط هذا الخطأ بواسطة كتلة catch أدناه وعرضه للمستخدم
+            throw new Error('يجب أن يحتوي رقم الجوال على أرقام فقط وبدون مسافات.');
+        }
+
+        // 3. إذا لم يتم العثور على مسافات، قم بتنظيف الرقم (هذا يزيل المسافات المبدئية والنهائية فقط)
+        const phone = rawPhoneValue.trim();
         
-        // Actions
-        document.getElementById('copyWhatsappBtn').addEventListener('click', () => {
-            const link = document.getElementById('whatsappLink');
-            link.select();
-            document.execCommand('copy');
-            showMessage('تم نسخ الرابط', 'success');
-        });
-
-        // --- Forms Submission ---
+        // 4. تأكد من أن الحقل ليس فارغًا بعد التنظيف
+        if (!phone) {
+            throw new Error("يرجى إدخال رقم الجوال.");
+        }
         
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const button = e.target.querySelector('button[type="submit"]');
-            setButtonLoading(button, true);
-            try {
-                const phoneNumber = document.getElementById('phoneNumber').value.trim();
-                if (!phoneNumber) throw new Error("يرجى إدخال رقم الجوال.");
-                const data = await sendData("loginMarketer", { phone: phoneNumber });
-                state.currentMarketer = data.marketer;
-                showPage('marketerDashboard');
-                await loadMarketerData();
-                showMessage('تم تسجيل الدخول بنجاح', 'success');
-            } catch (error) {
-                showMessage(error.message, 'error');
-            } finally {
-                setButtonLoading(button, false);
-            }
-        });
+        // --- END: نهاية التعديل ---
 
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const button = e.target.querySelector('button[type="submit"]');
-            setButtonLoading(button, true);
-            try {
-                const formData = {
-                    name: document.getElementById('marketerName').value.trim(),
-                    phone: document.getElementById('marketerPhone').value.trim(),
-                    date: document.getElementById('registrationDate').value
-                };
-                if (!formData.name || !formData.phone) throw new Error("يرجى ملء جميع الحقول.");
-                await sendData("add_marketer", formData);
-                showMessage('تم تسجيل المسوق بنجاح', 'success');
-                e.target.reset();
-                setTimeout(() => {
-                    showPage('publicView');
-                    loadPublicMarketers();
-                }, 1500);
-            } catch (error) {
-                showMessage(error.message, 'error');
-            } finally {
-                setButtonLoading(button, false);
-            }
-        });
-
-        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const button = e.target.querySelector('button[type="submit"]');
-            setButtonLoading(button, true);
-            try {
-                const adminCode = document.getElementById('adminCode').value;
-                if (adminCode === config.adminCode) {
-                    state.isAdmin = true;
-                    showPage('adminDashboard');
-                    await loadAdminPayments();
-                    showMessage('تم دخول الإدارة بنجاح', 'success');
-                } else {
-                    throw new Error('كود الإدارة غير صحيح');
-                }
-            } catch(error) {
-                showMessage(error.message, 'error');
-            } finally {
-                setButtonLoading(button, false);
-            }
-        });
-
+        // بقية الكود تبقى كما هي، لكنها الآن تعمل مع الرقم النظيف والمُتحقق منه
+        const data = await sendData("loginMarketer", { phone: phone });
+        if (data.marketer && data.token) {
+            state.currentMarketer = data.marketer;
+            state.sessionToken = data.token;
+            showPage('marketerDashboard');
+            await loadMarketerData();
+            showMessage('تم تسجيل الدخول بنجاح', 'success');
+        } else {
+            throw new Error('فشل تسجيل الدخول. لم يتم استلام بيانات الجلسة.');
+        }
+    } catch (err) {
+        // كتلة catch هذه ستعرض الآن رسالة الخطأ المخصصة التي أضفناها
+        showMessage(err.message, 'error');
+    } finally {
+        setButtonLoading(btn, false);
+    }
+});
+        document.getElementById('registerForm').addEventListener('submit', async (e) => { e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); setButtonLoading(btn, true); try { const formData = { name: document.getElementById('marketerName').value.trim(), phone: document.getElementById('marketerPhone').value.trim(), date: document.getElementById('registrationDate').value }; if (!formData.name || !formData.phone) throw new Error("يرجى ملء جميع الحقول."); await sendData("add_marketer", formData); showMessage('تم تسجيل المسوق بنجاح', 'success'); e.target.reset(); setTimeout(() => { showPage('publicView'); loadPublicMarketers(); }, 1500); } catch (err) { showMessage(err.message, 'error'); } finally { setButtonLoading(btn, false); } });
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => { e.preventDefault(); const btn = e.target.querySelector('button[type="submit"]'); setButtonLoading(btn, true); try { const code = document.getElementById('adminCode').value; if (code === config.adminCode) { state.isAdmin = true; showPage('adminDashboard'); await loadAdminPayments(); showMessage('تم دخول الإدارة بنجاح', 'success'); } else { throw new Error('كود الإدارة غير صحيح'); } } catch(err) { showMessage(err.message, 'error'); } finally { setButtonLoading(btn, false); } });
         document.getElementById('paymentRequestForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const button = e.target.querySelector('button[type="submit"]');
-            setButtonLoading(button, true);
+            const btn = e.target.querySelector('button[type="submit"]');
+            setButtonLoading(btn, true);
             try {
-                if (!state.currentMarketer) throw new Error('جلسة غير صالحة. يرجى تسجيل الخروج والدخول مرة أخرى.');
-                const requestedAmount = parseFloat(document.getElementById('paymentAmount').value);
-                const totalProfit = state.currentMarketer.clients.reduce((s, c) => s + (parseFloat(c.price) || 0), 0);
-                const totalPayments = state.currentMarketer.payments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
-                const availableBalance = totalProfit - totalPayments;
-                
-                if (isNaN(requestedAmount) || requestedAmount <= 0) throw new Error('يجب إدخال مبلغ صحيح أكبر من صفر.');
-                if (requestedAmount > availableBalance) throw new Error('المبلغ المطلوب أكبر من الرصيد المتاح.');
-                
-                const formData = {
-                    operationId: 'PAY' + Date.now(),
-                    name: document.getElementById('paymentName').value,
-                    code: document.getElementById('paymentCode').value,
-                    phone: document.getElementById('paymentPhone').value,
-                    date: document.getElementById('paymentDate').value,
-                    amount: requestedAmount,
-                    status: 'قيد المعالجة'
-                };
-                
-                await sendData("add_payment_request", formData);
-                showMessage('تم إرسال طلب الدفع بنجاح.', 'success');
+                if (!state.currentMarketer || !state.sessionToken) throw new Error('جلسة غير صالحة.');
+                const amount = parseFloat(document.getElementById('paymentAmount').value);
+                if (isNaN(amount) || amount <= 0) throw new Error('يجب إدخال مبلغ صحيح أكبر من صفر.');
+                const maxAmount = parseFloat(document.getElementById('paymentAmount').max);
+                if (amount > maxAmount) throw new Error('لا يمكنك طلب مبلغ أكبر من الرصيد المتاح.');
+                await sendData("add_payment_request", { amount: amount });
+                showMessage('تم إرسال طلب الدفع بنجاح. سيتم مراجعته من قبل الإدارة.', 'success');
                 e.target.reset();
                 await loadMarketerData();
-            } catch (error) {
-                showMessage(error.message, 'error');
-            } finally {
-                setButtonLoading(button, false);
-            }
+            } catch (err) { showMessage(err.message, 'error'); } finally { setButtonLoading(btn, false); }
         });
     });
-</script>
+    </script>
 </body>
 </html>
