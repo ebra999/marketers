@@ -178,8 +178,45 @@
                 </div>
                 
                 <div id="myDataContent" class="tab-content active">
-                    <div class="grid md:grid-cols-2 gap-6"><div class="space-y-4"><div class="bg-blue-50 p-4 rounded-lg"><h3 class="font-semibold text-blue-800 mb-2">الاسم</h3><p id="dashboardMarketerName" class="text-blue-600 text-lg">-</p></div><div class="bg-green-50 p-4 rounded-lg"><h3 class="font-semibold text-green-800 mb-2">الكود</h3><p id="marketerCode" class="text-green-600 text-lg font-mono">-</p></div><div class="bg-purple-50 p-4 rounded-lg"><h3 class="font-semibold text-purple-800 mb-2">رقم الجوال</h3><p id="dashboardMarketerPhone" class="text-purple-600 text-lg">-</p></div><div class="bg-orange-50 p-4 rounded-lg"><h3 class="font-semibold text-orange-800 mb-2">تاريخ التسجيل</h3><p id="marketerDate" class="text-orange-600">-</p></div></div><div class="space-y-4"><div class="bg-yellow-50 p-4 rounded-lg"><h3 class="font-semibold text-yellow-800 mb-2">المتبقي</h3><p id="remainingAmount" class="text-yellow-600 text-2xl font-bold">$0.00</p></div><div class="bg-gray-50 p-4 rounded-lg"><h3 class="font-semibold text-gray-800 mb-2">رابط الواتساب</h3><div class="flex items-center gap-2"><textarea id="whatsappLink" readonly rows="5" class="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm text-right resize-none"></textarea><button id="copyWhatsappBtn" class="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700"><i class="fas fa-copy"></i></button></div></div></div></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- العمود الأول -->
+        <div class="space-y-4">
+            <div class="bg-blue-50 p-4 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-blue-800 mb-1">الاسم</h3>
+                <p id="dashboardMarketerName" class="text-blue-600 text-lg">-</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-green-800 mb-1">الكود</h3>
+                <p id="marketerCode" class="text-green-600 text-lg font-mono">-</p>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-purple-800 mb-1">رقم الجوال</h3>
+                <p id="dashboardMarketerPhone" class="text-purple-600 text-lg font-mono">-</p>
+            </div>
+        </div>
+
+        <!-- العمود الثاني -->
+        <div class="space-y-4">
+            <div class="bg-orange-50 p-4 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-orange-800 mb-1">تاريخ التسجيل</h3>
+                <p id="marketerDate" class="text-orange-600">-</p>
+            </div>
+            <div class="bg-yellow-50 p-4 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-yellow-800 mb-1">الرصيد المتبقي</h3>
+                <p id="remainingAmount" class="text-yellow-600 text-2xl font-bold">$0.00</p>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                <h3 class="font-semibold text-gray-800 mb-1">رابط الواتساب</h3>
+                <div class="flex items-center gap-2">
+                    <textarea id="whatsappLink" readonly rows="4" class="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-white text-sm text-right resize-none"></textarea>
+                    <button id="copyWhatsappBtn" class="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 self-start">
+                        <i class="fas fa-copy"></i>
+                    </button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- START: تعديل تبويب عملائي -->
                 <div id="myClientsContent" class="tab-content">
